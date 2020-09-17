@@ -16,7 +16,8 @@ do
 terms=0
 trap ' [ $terms = 1 ] || { terms=1; kill -TERM -$$; };  exit' EXIT INT HUP TERM QUIT 
 
-if [ "$#" -eq "0" ]		    #στην περίπτωση που δε δοθεί όρισμα παίρνει το προκαθορισμένο αρχείο
+# Στην περίπτωση που δε δοθεί όρισμα παίρνει το προκαθορισμένο αρχείο
+if [ "$#" -eq "0" ]		    
 	then
 	stations="$HOME/.shelldio/my_stations.txt"
 	else
@@ -59,7 +60,8 @@ if [[ $input = "q" ]] || [[ $input = "Q" ]]
 	exit 0
 fi
 
-if [ "$input" -gt 0 ] && [ "$input" -le $num ]; #έλεγχος αν το input είναι μέσα στο εύρος της λίστας των σταθμών
+# Έλεγχος αν το input είναι μέσα στο εύρος της λίστας των σταθμών
+if [ "$input" -gt 0 ] && [ "$input" -le $num ];
 	then
 	stathmos_name=$(< "$stations" head -n$(( "$input" )) | tail -n1 | cut -d "," -f1)
 	stathmos_url=$(< "$stations" head -n$(( "$input" )) | tail -n1 | cut -d "," -f2)
