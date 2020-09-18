@@ -107,8 +107,9 @@ do
         # Έλεγχος αν το input είναι μέσα στο εύρος της λίστας των σταθμών
         if [ "$input" -gt 0 ] && [ "$input" -le $num ];
         then
-            stathmos_name=$(< "$stations" head -n$(( "$input" )) | tail -n1 | cut -d "," -f1)
-            stathmos_url=$(< "$stations" head -n$(( "$input" )) | tail -n1 | cut -d "," -f2)
+            station=$(sed "${input}q;d" "$stations")
+            stathmos_name=$(echo "$station" | cut -d "," -f1)
+            stathmos_url=$(echo "$station" | cut -d "," -f2)
             break
         else
             echo "Αριθμός εκτός λίστας"
