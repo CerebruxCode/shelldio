@@ -11,18 +11,55 @@
 # Please read the file LICENSE and README for more information.
 #
 #
+
+# Verbosity
+ERR="[Πρόβλημα]   : "
+INFO="[Πληροφορία] : "
+FATAL="[Σφάλμα]     : "
+
+# Έλεγχος αρχείου σταθμών
+user_stations="$HOME/.shelldio/my_stations.txt"
+all_stations="$HOME/.shelldio/all_stations.txt"
+stations_url="https://raw.githubusercontent.com/CerebruxCode/shelldio/master/.shelldio/all_stations.txt"
+if [ "$#" -eq "0" ]
+then
+    echo "$ERR δεν ορίστηκε προσαρμοσμένο αρχείο σταθμών"
+    echo "$INFO φόρτωση αγαπημένων σταθμών του χρήστη $USER"
+    if [ ! -f "$user_stations" ]; then
+        echo "$ERR δεν βρέθηκε το αρχείο '$user_stations'"
+        echo "$INFO φόρτωση προκαθορισμένων σταθμών"
+        if [ ! -f "$all_stations" ]; then
+            echo "$ERR δεν βρέθηκε το αρχείο '$all_stations'"
+            echo "$INFO προσπάθεια ανάκτησης αρχείου προκαθορισμένων σταθμών από το github"
+			mkdir ~/.shelldio &> /dev/null
+            if ! wget $stations_url -O "$all_stations" &> /dev/null;
+            then
+                echo "$ERR προέκυψε πρόβλημα με το δίκτυο"
+                echo "$FATAL αδυναμία φόρτωση σταθμών"
+                exit 1
+            fi
+            echo "$INFO το αρχείο κατέβηκε επιτυχώς"
+        fi
+        echo "$INFO φόρτωση προκαθορισμένων σταθμών"
+        stations="$all_stations"
+    else
+        echo "$INFO φόρτωση αγαπημένων σταθμών"
+        stations="$user_stations"
+    fi
+else
+    echo "$INFO φόρτωση προσαρμοσμένου αρχείου"
+    if [ ! -f "$1" ]; then
+        echo "$ERR δεν βρέθηκε το αρχείο '$1'"
+		echo "$FATAL αδυναμία φόρτωση σταθμών"
+		exit 1
+    fi
+    stations=$1
+fi
+
 while true
 do
     terms=0
     trap ' [ $terms = 1 ] || { terms=1; kill -TERM -$$; };  exit' EXIT INT HUP TERM QUIT
-    
-    # Στην περίπτωση που δε δοθεί όρισμα παίρνει το προκαθορισμένο αρχείο
-    if [ "$#" -eq "0" ]
-    then
-        stations="$HOME/.shelldio/my_stations.txt"
-    else
-        stations=$1
-    fi
     
     player=$(command -v mpv 2>/dev/null || command -v mplayer 2>/dev/null || command -v mpg123 2>/dev/null || echo "1")
     
