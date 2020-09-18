@@ -17,6 +17,19 @@ ERR="[Πρόβλημα]   : "
 INFO="[Πληροφορία] : "
 FATAL="[Σφάλμα]     : "
 
+# Έλεγχος προαπαιτούμενων binaries
+echo "$INFO ελεγχος προαπαιτούμενων"
+player=$(command -v mpv 2>/dev/null || command -v mplayer 2>/dev/null || command -v mpg123 2>/dev/null || echo "1")
+if [[ $player = 1 ]];
+then
+    echo "$FATAL δε βρέθηκε συμβατός player, συμβατοί players είναι οι 'mpv', 'mplayer' και 'mpg123'"
+    exit 1
+fi
+if ! command -v wget &> /dev/null; then
+    echo "$FATAL δε βρέθηκε το 'wget'"
+    exit 1
+fi
+
 # Έλεγχος αρχείου σταθμών
 user_stations="$HOME/.shelldio/my_stations.txt"
 all_stations="$HOME/.shelldio/all_stations.txt"
@@ -31,7 +44,7 @@ then
         if [ ! -f "$all_stations" ]; then
             echo "$ERR δεν βρέθηκε το αρχείο '$all_stations'"
             echo "$INFO προσπάθεια ανάκτησης αρχείου προκαθορισμένων σταθμών από το github"
-			mkdir ~/.shelldio &> /dev/null
+            mkdir ~/.shelldio &> /dev/null
             if ! wget $stations_url -O "$all_stations" &> /dev/null;
             then
                 echo "$ERR προέκυψε πρόβλημα με το δίκτυο"
@@ -50,8 +63,8 @@ else
     echo "$INFO φόρτωση προσαρμοσμένου αρχείου"
     if [ ! -f "$1" ]; then
         echo "$ERR δεν βρέθηκε το αρχείο '$1'"
-		echo "$FATAL αδυναμία φόρτωση σταθμών"
-		exit 1
+        echo "$FATAL αδυναμία φόρτωση σταθμών"
+        exit 1
     fi
     stations=$1
 fi
@@ -60,14 +73,6 @@ while true
 do
     terms=0
     trap ' [ $terms = 1 ] || { terms=1; kill -TERM -$$; };  exit' EXIT INT HUP TERM QUIT
-    
-    player=$(command -v mpv 2>/dev/null || command -v mplayer 2>/dev/null || command -v mpg123 2>/dev/null || echo "1")
-    
-    if [[ $player = 1 ]];
-    then
-        echo "Δε βρέθηκε συμβατός player, συμβατοί players είναι οι mplayer και mpv"
-        exit
-    fi
     
     info() {
         tput civis      -- invisible  # Εξαφάνιση cursor
