@@ -25,10 +25,12 @@ then
     echo "$FATAL δε βρέθηκε συμβατός player, συμβατοί players είναι οι 'mpv', 'mplayer' και 'mpg123'"
     exit 1
 fi
-if ! command -v wget &> /dev/null; then
-    echo "$FATAL δε βρέθηκε το 'wget'"
-    exit 1
-fi
+for binary in wget info tput sleep clear killall; do
+    if ! command -v $binary &> /dev/null; then
+        echo "$FATAL δε βρέθηκε το '$binary'"
+        exit 1
+    fi
+done
 
 # Έλεγχος αρχείου σταθμών
 user_stations="$HOME/.shelldio/my_stations.txt"
