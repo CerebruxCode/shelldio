@@ -99,7 +99,7 @@ do
         
         if [[ $input = "q" ]] || [[ $input = "Q" ]]
         then
-            echo "Έξοδος..."
+            echo "$INFO έξοδος..."
             tput cnorm   -- normal  # Εμφάνιση cursor
             exit 0
         fi
@@ -112,7 +112,7 @@ do
             stathmos_url=$(echo "$station" | cut -d "," -f2)
             break
         else
-            echo "Αριθμός εκτός λίστας"
+            echo "$ERR αριθμός εκτός λίστας"
             sleep 2
             clear
         fi
@@ -129,7 +129,7 @@ do
         if [[ $input = "q" ]] || [[ $input = "Q" ]]
         then
             clear
-            echo "Έξοδος..."
+            echo "$INFO έξοδος..."
             tput cnorm   -- normal  # Εμφάνιση cursor
             exit 0
         fi
@@ -138,14 +138,11 @@ do
         then
             killall -9 "$player" &> /dev/null
             clear
-            echo "Επιστροφή στη λίστα σταθμών"
+            echo "$INFO επιστροφή στη λίστα σταθμών"
             tput cnorm   -- normal  # Εμφάνιση cursor
             sleep 2
             clear
-            break
-            
-            
-            
+            break 
         fi
     done
     
