@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "JohnGavr",
+      "name": "JohnGavr",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/47471932?v=4",
+      "profile": "https://github.com/JohnGavr",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "shelldio",
+  "projectOwner": "CerebruxCode",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
