@@ -1,4 +1,7 @@
 # Shelldio
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Ένα απλό shell script για να παίζετε τους αγαπημένους σας ραδιοφωνικούς σταθμούς στο τερματικό. 
 
@@ -167,3 +170,22 @@ shelldio --fresh
 Συνήθως, οι νέες προσθήκες θα μπαίνουν στο τέλος για να τις βρίσκετε άμεσα. Αν δεν εμφανίζονται μπορείτε να κάνετε αναζήτηση με όνομα όπως περιγράψαμε πιο πάνω.
 
 Αν έχετε δικούς σας σταθμούς ή φίλων σας και είναι internetικά ραδιόφωνα, θα χαρούμε πολύ να τα προσθέσουμε στο **shelldio** ανοίγοντας μας ένα [issue](https://github.com/CerebruxCode/shelldio/issues/new)
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://panosgeorgiadis.com/"><img src="https://avatars2.githubusercontent.com/u/2141732?v=4" width="100px;" alt=""/><br /><sub><b>Panagiotis Georgiadis</b></sub></a><br /><a href="https://github.com/CerebruxCode/shelldio/commits?author=drpaneas" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
