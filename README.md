@@ -180,6 +180,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
+    <td align="center"><a href="https://wiki.ubuntu.com/SalihEmin"><img src="https://avatars1.githubusercontent.com/u/914656?v=4" width="100px;" alt=""/><br /><sub><b>Salih Emin</b></sub></a><br /><a href="#projectManagement-cerebrux" title="Project Management">📆</a> <a href="https://github.com/CerebruxCode/shelldio/commits?author=cerebrux" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/JohnGavr"><img src="https://avatars0.githubusercontent.com/u/47471932?v=4" width="100px;" alt=""/><br /><sub><b>JohnGavr</b></sub></a><br /><a href="https://github.com/CerebruxCode/shelldio/commits?author=JohnGavr" title="Code">💻</a></td>
   </tr>
 </table>
