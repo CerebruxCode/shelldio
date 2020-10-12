@@ -13,6 +13,17 @@
 # Please read the file LICENSE and README for more information.
 #
 
+### Colors
+if [ -t 1 ]; then
+  RED=$(printf '\033[31m')
+  BLUE=$(printf '\033[34m')
+  RESET=$(printf '\033[m')
+else
+  RED=""
+  BLUE=""
+  RESET=""
+fi
+
 ### Variable List
 version="v2.4.1  " # this space after the version num is intentional to fix UI
 
@@ -101,6 +112,8 @@ option_detail() {
 	-r, --remove: 	Εμφανίζει την λίστα με τους σταθμούς που έχετε προσθέσει στα αγαπημένα σας και σας
 			δίνει την δυνατότητα να αφαιρέσετε όποια θέλετε 
 			(από το $my_stations)
+
+	-u, --update: 	Κάνει self-update το shelldio
 
 	--reset: 	Προσοχή - Καθαρίζει τη λίστα με τους σταθμούς που έχετε προσθέσει στα αγαπημένα σας
 			διαγράφοντας το αρχείο $my_stations. Είναι χρήσιμο αν 
@@ -224,6 +237,26 @@ reset_favorites() {
 	exit 0
 }
 
+self_update() {
+	if ! command -v git &>/dev/null; then
+		return
+	fi
+
+	read -rp "Θέλεις να γίνει αναβάθμιση του shelldio; (y/n)" update_confirm
+	case $update_confirm in
+	[Yy]*)
+		printf "${BLUE}%s${RESET}\n" "Γίνεται αναβάθμιση του shelldio"
+		if git pull --rebase --stat origin master; then
+			printf "${BLUE}%s${RESET}\n" "Ολοκληρώθηκε η αναβάθμιση του shelldio."
+		else
+			printf "${RED}%s${RESET}\n" 'Κάποιο πρόβλημα παρουσιάστηκε κατά την αναβάθμιση. Δοκίμασε ξανά αργότερα'
+		fi
+		;;
+	[Nn]*) exit ;;
+	*) echo "Παρακαλώ απαντήστε με y (ναι) ή n (όχι)" ;;
+	esac
+}
+
 ### Λίστα με τις επιλογές σαν 1ο όρισμα shelldio
 
 while [ "$1" != "" ]; do
@@ -285,6 +318,9 @@ while [ "$1" != "" ]; do
 		sleep 1
 		curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
 		exit 0
+		;;
+	-u | --update)
+		self_update
 		;;
 	*)
 		echo "Λάθος επιλογή."
