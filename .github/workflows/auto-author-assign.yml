@@ -1,12 +1,14 @@
 name: 'Auto Author Assign'
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, reopened]
 jobs:
   add-assignees:
     runs-on: ubuntu-latest
     steps:
-      - name: auto-author-assign
-        uses: toshimaru/auto-author-assign@v1.1.2
+      - uses: actions/checkout@v2
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/head
+      - uses: toshimaru/auto-author-assign@v1.2.0
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
