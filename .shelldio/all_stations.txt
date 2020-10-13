@@ -85,7 +85,7 @@ Studio 3 103.5,http://s1.onweb.gr:8408
 Styl FM 104.9,http://s3.onweb.gr:8530/;
 ThessRadio,http://noc.ezhellas.com:30570/zbutsam
 Velvet 96.8,http://netradio.live24.gr/velvet968thess
-Venus, Amaliada Alt.,http://s3.onweb.gr:8808
+Venus Amaliada Alt.,http://s3.onweb.gr:8808
 Venus Amaliada,http://eco.onestreaming.com:8171
 V FM 91.1,http://176.9.184.196:8177/stream
 Wave Patra (Rock),http://live.webhosting4u.gr:8007
