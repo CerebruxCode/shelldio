@@ -25,7 +25,7 @@ else
 fi
 
 ### Variable List
-version="v2.4.1  " # this space after the version num is intentional to fix UI
+version="v2.5.0  " # this space after the version num is intentional to fix UI
 
 all_stations="$HOME/.shelldio/all_stations.txt"
 my_stations="$HOME/.shelldio/my_stations.txt"
@@ -113,7 +113,9 @@ option_detail() {
 			δίνει την δυνατότητα να αφαιρέσετε όποια θέλετε 
 			(από το $my_stations)
 
-	-u, --update: 	Κάνει self-update το shelldio
+	-u, --update: 	Σας δίνει την δυνατότητα να κάνετε αναβάθμιση του Shelldio στην νεότερη διαθέσιμη έκδοση.
+			Προσοχή, η αναβάθμιση με αυτόν τον τρόπο ισχύει μόνο για αυτούς που έκαναν εγκατάσταση το shelldio
+			με git clone και όχι απο πακέτο εγκατάστασης (π.χ. στο Arch Linux)
 
 	--reset: 	Προσοχή - Καθαρίζει τη λίστα με τους σταθμούς που έχετε προσθέσει στα αγαπημένα σας
 			διαγράφοντας το αρχείο $my_stations. Είναι χρήσιμο αν 
