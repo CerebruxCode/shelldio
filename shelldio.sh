@@ -248,7 +248,7 @@ self_update() {
 	case $update_confirm in
 	[Yy]*)
 		printf "${BLUE}%s${RESET}\n" "Γίνεται αναβάθμιση του shelldio"
-		if git pull --rebase --stat origin master; then
+		if git pull --rebase --stat origin stable; then
 			printf "${BLUE}%s${RESET}\n" "Ολοκληρώθηκε η αναβάθμιση του shelldio."
 		else
 			printf "${RED}%s${RESET}\n" 'Κάποιο πρόβλημα παρουσιάστηκε κατά την αναβάθμιση. Δοκίμασε ξανά αργότερα'
