@@ -98,6 +98,10 @@ option_detail() {
 	-a, --add: 	Εμφανίζει την γενική λίστα με όλους τους διαθέσιμους ραδιοφωνικούς σταθμούς 
 			και σας δίνει την δυνατότητα να προσθέσετε, όποια επιθυμείτε, στην λίστα με τoυς αγαπημένους σας
 			σταθμούς (στο αρχείο $my_stations)
+
+	-n, --new:	Εμφανίζει την γενική λίστα με όλους τους διαθέσιμους ραδιοφωνικούς σταθμούς 
+			και σας δίνει την δυνατότητα να προσθέσετε έναν νέο σταθμό στην λίστα με τους διαθέσιμους 
+			ραδιοφωνικούς σταθμούς (στο αρχείο $all_stations)
 	
 	-f, --fresh: 	Κατεβάζει εκ νέου την γενική λίστα των ραδιοφωνικών σταθμών με επικαιροποιημένους
 			ραδιοφωνικούς σταθμούς, διορθωμένα links αλλά και νέους ραδιοφωνικούς σταθμούς
@@ -211,6 +215,24 @@ mpv_msg() {
 		echo "https://mpv.io/installation/"
 	fi
 }
+new_station(){
+	echo "Εμφάνιση λίστας σταθμών"
+	sleep 1
+	list_stations "$all_stations"
+	while true; do
+		read -rp "Δώσε όνομα νέου σταθμού  (Q/q για έξοδο): " station_name
+		if [[ $station_name = "q" ]] || [[ $station_name = "Q" ]]; then
+			echo "Έξοδος..."
+			exit 0
+		fi
+		read -rp "Δώσε url νέου σταθμού: " station_url
+		echo "$station_name,$station_url" >>"$all_stations"
+		echo " Προστέθηκε ο σταθμός $station_name."
+  
+	done
+	exit 0
+
+}
 
 reset_favorites() {
 	if [ ! -f "$my_stations" ]; then
@@ -299,6 +321,13 @@ while [ "$1" != "" ]; do
 		welcome_screen
 		validate_station_lists
 		add_stations
+		validate_station_lists
+		exit 0
+		;;
+	-n | --new-station)
+		welcome_screen
+		validate_station_lists
+		new_station
 		validate_station_lists
 		exit 0
 		;;
@@ -421,6 +450,7 @@ while true; do
 			sleep 1
 			clear
 		fi
+	
 	done
 
 	mpv "$stathmos_url" &>/dev/null &
