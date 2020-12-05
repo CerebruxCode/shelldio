@@ -226,7 +226,7 @@ new_station(){
 			exit 0
 		fi
 		read -rp "Δώσε url νέου σταθμού: " station_url
-		echo "$station_name,$station_url" >>"$all_stations"
+		echo "$station_name,$station_url" >>"$my_stations"
 		echo " Προστέθηκε ο σταθμός $station_name."
   
 	done
