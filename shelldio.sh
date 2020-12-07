@@ -215,10 +215,10 @@ mpv_msg() {
 		echo "https://mpv.io/installation/"
 	fi
 }
-new_station(){
+new_station() {
 	echo "Εμφάνιση λίστας σταθμών"
 	sleep 1
-	list_stations "$all_stations"
+	list_stations "$my_stations"
 	while true; do
 		read -rp "Δώσε όνομα νέου σταθμού  (Q/q για έξοδο): " station_name
 		if [[ $station_name = "q" ]] || [[ $station_name = "Q" ]]; then
