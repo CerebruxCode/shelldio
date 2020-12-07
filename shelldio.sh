@@ -215,7 +215,7 @@ mpv_msg() {
 		echo "https://mpv.io/installation/"
 	fi
 }
-new_station() {
+new_station () {
 	echo "Εμφάνιση λίστας σταθμών"
 	sleep 1
 	list_stations "$my_stations"
@@ -450,7 +450,6 @@ while true; do
 			sleep 1
 			clear
 		fi
-	
 	done
 
 	mpv "$stathmos_url" &>/dev/null &
