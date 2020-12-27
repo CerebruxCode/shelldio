@@ -60,7 +60,6 @@ Mythos Athens,http://bestgreek.info:8104
 North 98,http://netradio.live24.gr:80/north98thess
 Nostos 100.6,https://neos.win:37878/stream
 Off Radio,http://46.28.53.118:7062/stream
-Overfm Athens 104.9,https://netradio.live24.gr/overfm-internet
 Party FM 104,https://radio.streamings.gr:9006/stream
 Pepper 96.6,http://pepper966.live24.gr:80/pepperorigin
 Piqeras DeeJay 105.6,http://rosetta.shoutca.st:8270/stream
