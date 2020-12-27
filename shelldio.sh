@@ -265,7 +265,7 @@ self_update() {
 		return
 	fi
 
-	read -rp "Θέλεις να γίνει αναβάθμιση του shelldio; (y/n)" update_confirm
+	read -rp "Θέλεις να γίνει αναβάθμιση του shelldio; (y/n) : " update_confirm
 	case $update_confirm in
 	[Yy]*)
 		printf "${BLUE}%s${RESET}\n" "Γίνεται αναβάθμιση του shelldio"
