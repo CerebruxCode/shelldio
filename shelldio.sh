@@ -260,12 +260,26 @@ reset_favorites() {
 	exit 0
 }
 
+git_updater() {
+    if [[ "$(file /usr/local/bin/shelldio | grep -io "link")" == "link" ]];
+	    then
+		    printf "Το Shelldio έχει εγκατασταθεί μέσω git\n"
+		    RETURN_TO_PWD=$(pwd)
+		    cd "$(file /usr/local/bin/shelldio | awk -F'to ' '{print $2}' | awk -F"shelldio\\\.sh" '{print $1}')" || return
+	        #./shelldio.sh -u
+            self_update
+		    cd "$RETURN_TO_PWD" || exit 0;
+        else
+	        echo "To Shelldio έχει εγκατασταθεί μέσω AUR δεν είναι διαθέσιμη η ενημέρωση μέσω ορίσματος"      
+	fi
+}
+
 self_update() {
 	if ! command -v git &>/dev/null; then
 		return
 	fi
 
-	read -rp "Θέλεις να γίνει αναβάθμιση του shelldio; (y/n)" update_confirm
+	read -rp "Θέλεις να γίνει αναβάθμιση του shelldio; (y/n) : " update_confirm
 	case $update_confirm in
 	[Yy]*)
 		printf "${BLUE}%s${RESET}\n" "Γίνεται αναβάθμιση του shelldio"
@@ -350,7 +364,7 @@ while [ "$1" != "" ]; do
 		exit 0
 		;;
 	-u | --update)
-		self_update
+		git_updater
 		;;
 	*)
 		echo "Λάθος επιλογή."
