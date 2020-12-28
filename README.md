@@ -112,7 +112,7 @@ yay -Rcsu shelldio
 Τρέξτε τις παρακάτω εντολές :
 
 ``` bash
-sudo unlink /usr/bin/shelldio
+sudo unlink /usr/local/bin/shelldio
 ```
 
 Τέλος μπορείτε να διαγράψετε και τον φάκελο που κατέβηκε με `git clone`
