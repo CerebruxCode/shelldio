@@ -215,22 +215,25 @@ mpv_msg() {
 	fi
 }
 new_station() {
-	echo "Εμφάνιση λίστας σταθμών"
-	sleep 1
-	list_stations "$my_stations"
-	while true; do
-		read -rp "Δώσε όνομα νέου σταθμού  (Q/q για έξοδο): " station_name
-		if [[ $station_name = "q" ]] || [[ $station_name = "Q" ]]; then
-			echo "Έξοδος..."
-			exit 0
-		fi
-		read -rp "Δώσε url νέου σταθμού: " station_url
-		echo "$station_name,$station_url" >>"$my_stations"
-		echo " Προστέθηκε ο σταθμός $station_name."
-
-	done
-	exit 0
-
+	if [ ! -f "$HOME/.shelldio/my_stations.txt" ]; then
+		echo "Δεν έχει δημιουργηθεί το αρχείο my_stations."
+		echo "Για πληροφορίες τρέξε την παράμετρο --help."
+	else
+		echo "Εμφάνιση λίστας προσωπικών σταθμών"
+		sleep 1
+		list_stations "$my_stations"
+		while true; do
+			read -rp "Δώσε όνομα νέου σταθμού (ή δώσε Q/q για έξοδο): " station_name
+			if [[ $station_name = "q" ]] || [[ $station_name = "Q" ]]; then
+				echo "Έξοδος..."
+				exit 0
+			fi
+			read -rp "Δώσε url νέου σταθμού: " station_url
+			echo "$station_name,$station_url" >>"$my_stations"
+			echo " Προστέθηκε ο σταθμός $station_name."
+		done
+		exit 0
+	fi
 }
 
 reset_favorites() {
