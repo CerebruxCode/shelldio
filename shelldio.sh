@@ -267,7 +267,7 @@ git_updater() {
 	if [[ -L "/usr/local/bin/shelldio" ]]; then
 		printf "Το Shelldio έχει εγκατασταθεί σωστά μέσω git\n"
 		RETURN_TO_PWD=$(pwd)
-		basedir="$(dirname $(readlink /usr/local/bin/shelldio))"
+		basedir="$(dirname "$(readlink /usr/local/bin/shelldio)")"
 		cd "$basedir" || return
 		self_update
 		cd "$RETURN_TO_PWD" || exit 0
