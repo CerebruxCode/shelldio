@@ -264,10 +264,11 @@ reset_favorites() {
 }
 
 git_updater() {
-	if [[ "$(file /usr/local/bin/shelldio | grep -io "link")" == "link" ]]; then
+	if [[ -L "/usr/local/bin/shelldio" ]]; then
 		printf "Το Shelldio έχει εγκατασταθεί σωστά μέσω git\n"
 		RETURN_TO_PWD=$(pwd)
-		cd "$(file /usr/local/bin/shelldio | awk -F'to ' '{print $2}' | awk -F"shelldio\\\.sh" '{print $1}')" || return
+		basedir=$(dirname $(readlink /usr/local/bin/shelldio))
+		cd "$basedir" || return
 		self_update
 		cd "$RETURN_TO_PWD" || exit 0
 	else
