@@ -15,13 +15,13 @@
 
 ### Colors
 if [ -t 1 ]; then
-  RED=$(printf '\033[31m')
-  BLUE=$(printf '\033[34m')
-  RESET=$(printf '\033[m')
+	RED=$(printf '\033[31m')
+	BLUE=$(printf '\033[34m')
+	RESET=$(printf '\033[m')
 else
-  RED=""
-  BLUE=""
-  RESET=""
+	RED=""
+	BLUE=""
+	RESET=""
 fi
 
 ### Variable List
@@ -214,7 +214,7 @@ mpv_msg() {
 		echo "https://mpv.io/installation/"
 	fi
 }
-new_station () {
+new_station() {
 	echo "Εμφάνιση λίστας σταθμών"
 	sleep 1
 	list_stations "$my_stations"
@@ -227,7 +227,7 @@ new_station () {
 		read -rp "Δώσε url νέου σταθμού: " station_url
 		echo "$station_name,$station_url" >>"$my_stations"
 		echo " Προστέθηκε ο σταθμός $station_name."
-  
+
 	done
 	exit 0
 
@@ -261,16 +261,14 @@ reset_favorites() {
 }
 
 git_updater() {
-    if [[ "$(file /usr/local/bin/shelldio | grep -io "link")" == "link" ]];
-	    then
-		    printf "Το Shelldio έχει εγκατασταθεί μέσω git\n"
-		    RETURN_TO_PWD=$(pwd)
-		    cd "$(file /usr/local/bin/shelldio | awk -F'to ' '{print $2}' | awk -F"shelldio\\\.sh" '{print $1}')" || return
-	        #./shelldio.sh -u
-            self_update
-		    cd "$RETURN_TO_PWD" || exit 0;
-        else
-	        echo "To Shelldio έχει εγκατασταθεί μέσω AUR δεν είναι διαθέσιμη η ενημέρωση μέσω ορίσματος"      
+	if [[ "$(file /usr/local/bin/shelldio | grep -io "link")" == "link" ]]; then
+		printf "Το Shelldio έχει εγκατασταθεί σωστά μέσω git\n"
+		RETURN_TO_PWD=$(pwd)
+		cd "$(file /usr/local/bin/shelldio | awk -F'to ' '{print $2}' | awk -F"shelldio\\\.sh" '{print $1}')" || return
+		self_update
+		cd "$RETURN_TO_PWD" || exit 0
+	else
+		echo "To Shelldio δεν έχει εγκατασταθεί μέσω git clone οπότε δεν είναι διαθέσιμη η ενημέρωση μέσω shelldio -u"
 	fi
 }
 
@@ -288,7 +286,8 @@ self_update() {
 		else
 			printf "${RED}%s${RESET}\n" 'Κάποιο πρόβλημα παρουσιάστηκε κατά την αναβάθμιση. Δοκίμασε ξανά αργότερα'
 		fi
-		exit ;;
+		exit
+		;;
 	[Nn]*) exit ;;
 	*) echo "Παρακαλώ απαντήστε με y (ναι) ή n (όχι)" ;;
 	esac
