@@ -15,17 +15,17 @@
 
 ### Colors
 if [ -t 1 ]; then
-  RED=$(printf '\033[31m')
-  BLUE=$(printf '\033[34m')
-  RESET=$(printf '\033[m')
+	RED=$(printf '\033[31m')
+	BLUE=$(printf '\033[34m')
+	RESET=$(printf '\033[m')
 else
-  RED=""
-  BLUE=""
-  RESET=""
+	RED=""
+	BLUE=""
+	RESET=""
 fi
 
 ### Variable List
-version="v3.0.0  " # this space after the version num is intentional to fix UI
+version="v4.0.1  " # this space after the version num is intentional to fix UI
 
 all_stations="$HOME/.shelldio/all_stations.txt"
 my_stations="$HOME/.shelldio/my_stations.txt"
@@ -99,8 +99,7 @@ option_detail() {
 			και σας δίνει την δυνατότητα να προσθέσετε, όποια επιθυμείτε, στην λίστα με τoυς αγαπημένους σας
 			σταθμούς (στο αρχείο $my_stations)
 
-	-n, --new:	Εμφανίζει την γενική λίστα με όλους τους διαθέσιμους ραδιοφωνικούς σταθμούς 
-			και σας δίνει την δυνατότητα να προσθέσετε έναν νέο σταθμό στην λίστα με τους διαθέσιμους 
+	-n, --new:	Σας δίνει την δυνατότητα να προσθέσετε έναν νέο σταθμό στην λίστα με τους αγαπημένους σας 
 			ραδιοφωνικούς σταθμούς (στο αρχείο $my_stations)
 	
 	-f, --fresh: 	Κατεβάζει εκ νέου την γενική λίστα των ραδιοφωνικών σταθμών με επικαιροποιημένους
@@ -138,7 +137,7 @@ list_stations() {
 # Πληροφορίες που εμφανίζονται μετά την επιλογή του σταθμού
 info() {
 	welcome_screen
-	tput civis -- invisible # Εξαφάνιση cursor
+	tput civis -- invisible # Απόκρυψη cursor
 	echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $(date +"%T")\n"
 	echo -ne " \n"
 	echo -ne "  Ακούτε: $stathmos_name\n"
@@ -215,23 +214,26 @@ mpv_msg() {
 		echo "https://mpv.io/installation/"
 	fi
 }
-new_station () {
-	echo "Εμφάνιση λίστας σταθμών"
-	sleep 1
-	list_stations "$my_stations"
-	while true; do
-		read -rp "Δώσε όνομα νέου σταθμού  (Q/q για έξοδο): " station_name
-		if [[ $station_name = "q" ]] || [[ $station_name = "Q" ]]; then
-			echo "Έξοδος..."
-			exit 0
-		fi
-		read -rp "Δώσε url νέου σταθμού: " station_url
-		echo "$station_name,$station_url" >>"$my_stations"
-		echo " Προστέθηκε ο σταθμός $station_name."
-  
-	done
-	exit 0
-
+new_station() {
+	if [ ! -f "$HOME/.shelldio/my_stations.txt" ]; then
+		echo "Δεν έχει δημιουργηθεί το αρχείο my_stations."
+		echo "Για πληροφορίες τρέξε την παράμετρο --help."
+	else
+		echo "Εμφάνιση λίστας προσωπικών σταθμών"
+		sleep 1
+		list_stations "$my_stations"
+		while true; do
+			read -rp "Δώσε όνομα νέου σταθμού (ή δώσε Q/q για έξοδο): " station_name
+			if [[ $station_name = "q" ]] || [[ $station_name = "Q" ]]; then
+				echo "Έξοδος..."
+				exit 0
+			fi
+			read -rp "Δώσε url νέου σταθμού: " station_url
+			echo "$station_name,$station_url" >>"$my_stations"
+			echo " Προστέθηκε ο σταθμός $station_name."
+		done
+		exit 0
+	fi
 }
 
 reset_favorites() {
@@ -261,12 +263,25 @@ reset_favorites() {
 	exit 0
 }
 
+git_updater() {
+	if [[ -L "/usr/local/bin/shelldio" ]]; then
+		printf "Το Shelldio έχει εγκατασταθεί σωστά μέσω git\n"
+		RETURN_TO_PWD=$(pwd)
+		basedir="$(dirname "$(readlink /usr/local/bin/shelldio)")"
+		cd "$basedir" || return
+		self_update
+		cd "$RETURN_TO_PWD" || exit 0
+	else
+		echo "To Shelldio δεν έχει εγκατασταθεί μέσω git clone οπότε δεν είναι διαθέσιμη η ενημέρωση μέσω shelldio -u"
+	fi
+}
+
 self_update() {
 	if ! command -v git &>/dev/null; then
 		return
 	fi
 
-	read -rp "Θέλεις να γίνει αναβάθμιση του shelldio; (y/n)" update_confirm
+	read -rp "Θέλεις να γίνει αναβάθμιση του shelldio; (y/n) : " update_confirm
 	case $update_confirm in
 	[Yy]*)
 		printf "${BLUE}%s${RESET}\n" "Γίνεται αναβάθμιση του shelldio"
@@ -275,6 +290,7 @@ self_update() {
 		else
 			printf "${RED}%s${RESET}\n" 'Κάποιο πρόβλημα παρουσιάστηκε κατά την αναβάθμιση. Δοκίμασε ξανά αργότερα'
 		fi
+		exit
 		;;
 	[Nn]*) exit ;;
 	*) echo "Παρακαλώ απαντήστε με y (ναι) ή n (όχι)" ;;
@@ -351,7 +367,7 @@ while [ "$1" != "" ]; do
 		exit 0
 		;;
 	-u | --update)
-		self_update
+		git_updater
 		;;
 	*)
 		echo "Λάθος επιλογή."
