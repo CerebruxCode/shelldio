@@ -6,12 +6,14 @@
 A 100 FM 107.4,http://bestgreek.info:8104
 Alpha 96.5,http://46.4.121.138:7700/alpha
 Alpha 98.9,http://ample.radiojar.com/xcdg6yggzfeuv
+Amagi Radio,http://amagiradio.com:8000/stream
 Art FM 90.6,http://167.114.246.249:8023/stream
 Athens 106.5,http://148.251.162.206:9400/stream
 Athens DJ 95.2,http://netradio.live24.gr:80/athensdeejay
 Athens Voice 102.5,http://nitro.live24.gr:80/nitro4555
 Atlantis FM 105.2,http://85.10.206.222:8012
 Bar Legend Radio,https://solid24.streamupsolutions.com:2199/tunein/nilxzqeg.pls
+BBC World Service,http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-eieuk
 Best Radio 92.6,http://best.live24.gr:80/best1222
 Black Man 103.1,http://alpha-stream.eu:9326/;.mp3
 Ble.FM 93.1,http://radio.lancom.gr:8006/stream1
@@ -21,7 +23,7 @@ Church of Piraeus 91.2,http://136.243.61.157:8310/stream
 City International 106.1,http://50.7.99.155:7519/stream/1/
 Cosmoradio 95.1,http://cosmoradio.gr:80/stream1
 D-Code 962.gr,http://s15.myradiostream.com:13980/;listen.pls
-Derti Radio ,http://derti.live24.gr:80/derty1000
+Derti Radio,http://derti.live24.gr:80/derty1000
 Dromos FM 89.8,http://dromos898.live24.gr:80/dromos898
 Easy 97.2,http://easy972.live24.gr:80/easy972
 Ellada FM 94.3,http://netradio.live24.gr:80/ellada943
