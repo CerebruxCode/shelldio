@@ -195,19 +195,24 @@ remove_station() {
 	fi
 }
 
-mpv_msg() {
+player_installation_inctructions() {
 	if grep debian /etc/os-release &>/dev/null; then
-		echo "Τρέξτε 'sudo apt install mpv' για να εγκαταστήσετε τον player"
+		echo "Τρέξτε 'sudo apt install mpv' για να εγκαταστήσετε τον mpv player"
+		echo "ή 'sudo apt install mpg123' για να εγκαταστήσετε τον mpg123 player"
 	elif grep fedora /etc/os-release &>/dev/null; then
-		echo "Τρέξτε 'sudo dnf -y install mpv' για να εγκαταστήσετε τον player"
+		echo "Τρέξτε 'sudo dnf -y install mpv' για να εγκαταστήσετε τον mpv player"
 	elif grep suse /etc/os-release &>/dev/null; then
-		echo "Τρέξτε 'sudo zypper in mpv' για να εγκαταστήσετε τον player"
+		echo "Τρέξτε 'sudo zypper in mpv' για να εγκαταστήσετε τον mpv player"
+		echo "ή 'sudo zypper in mpg123' για να εγκαταστήσετε τον mpg123 player"
 	elif grep centos /etc/os-release &>/dev/null; then
-		echo "Τρέξτε 'sudo yum -y install mpv' για να εγκαταστήσετε τον player"
+		echo "Τρέξτε 'sudo yum -y install mpv' για να εγκαταστήσετε τον mpv player"
+		echo "ή 'sudo yum -y install mpg123' για να εγκαταστήσετε τον mpg123 player"
 	elif uname -a | grep Darwin &>/dev/null; then
-		echo "Τρέξτε 'sudo brew install mpv' για να εγκαταστήσετε τον player"
+		echo "Τρέξτε 'brew install mpv' για να εγκαταστήσετε τον mpv player"
+		echo "ή 'brew install mpg123' για να εγκαταστήσετε τον mpg123 player"
 	elif uname -a | grep BSD &>/dev/null; then
-		echo "Τρέξτε 'sudo pkg install mpv' για να εγκαταστήσετε τον player"
+		echo "Τρέξτε 'sudo pkg install mpv' για να εγκαταστήσετε τον mpv player"
+		echo "ή 'sudo pkg install mpg123' για να εγκαταστήσετε τον mpg123 player"
 	else
 		echo "Δεν μπορέσαμε να εντοπίσουμε το λειτουργικό σας σύστημα."
 		echo "Παρακαλούμε επισκεφτείτε τον παρακάτω σύνδεσμο για οδηγίες εγκατάστασης του MPV"
@@ -379,13 +384,14 @@ done
 
 ### Base script
 # Έλεγχος προαπαιτούμενων binaries
-player=$(command -v mpv 2>/dev/null || echo "1")
+player=$( (command -v mpg1234 2>/dev/null && echo "mpg123") || (command -v mspv 2>/dev/null && echo "mpv") || echo "1" )
 
-if [[ $player = 1 ]]; then
+if [[ "$player" = "1" ]]; then
 	echo "Έλεγχος προαπαιτούμενων για το Shelldio"
 	sleep 1
-	echo -e "Το Shelldio χρειάζεται το MPV player αλλά δεν βρέθηκε στο σύστημά σας.\nΠαρακαλούμε εγκαταστήστε το MPV πριν τρέξετε το Shelldio"
-	mpv_msg
+	echo -e "Το Shelldio χρειάζεται είτε το MPV player είτε το mpg123 player αλλά δεν βρέθηκαν στο σύστημά σας."
+	echo -e "Παρακαλούμε εγκαταστήστε ένα από τα 2 πριν τρέξετε το Shelldio\n"
+	player_installation_inctructions
 	exit 1
 fi
 for binary in grep curl info sleep clear killall; do
@@ -394,6 +400,8 @@ for binary in grep curl info sleep clear killall; do
 		exit 1
 	fi
 done
+
+player=$( (command -v mpg123 2>/dev/null && echo "mpg123") || (command -v mpv 2>/dev/null && echo "mpv") )
 
 # Έλεγχος εγκυρότητας λίστας σταθμών
 validate_station_lists
@@ -468,7 +476,11 @@ while true; do
 		fi
 	done
 
-	mpv "$stathmos_url" &>/dev/null &
+	if [[ "$player" = "mpg123" ]]; then
+		mpg123 "$stathmos_url" &>/dev/null &
+	else
+		mpv "$stathmos_url" &>/dev/null &
+	fi
 
 	while true; do
 		clear
@@ -481,7 +493,7 @@ while true; do
 			tput cnorm -- normal # Εμφάνιση cursor
 			exit 0
 		elif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
-			for pid in $(pgrep '^mpv$'); do
+			for pid in $(pgrep '^(mpv|mpg123)$'); do
 				url="$(ps -o command= -p "$pid" | awk '{print $2}')"
 				if [[ "$url" == "$stathmos_url" ]]; then
 					echo "Έξοδος..."
