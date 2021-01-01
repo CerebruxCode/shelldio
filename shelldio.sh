@@ -208,8 +208,8 @@ player_installation_inctructions() {
 		echo "Τρέξτε 'sudo yum -y install mpv' για να εγκαταστήσετε τον mpv player"
 		echo "ή 'sudo yum -y install mpg123' για να εγκαταστήσετε τον mpg123 player"
 	elif uname -a | grep Darwin &>/dev/null; then
-		echo "Τρέξτε 'brew install mpv' για να εγκαταστήσετε τον mpv player"
-		echo "ή 'brew install mpg123' για να εγκαταστήσετε τον mpg123 player"
+		echo "Τρέξτε 'brew install mpg123' για να εγκαταστήσετε τον mpg123 player"
+		echo "ή 'brew install mpv' για να εγκαταστήσετε τον mpv player"
 	elif uname -a | grep BSD &>/dev/null; then
 		echo "Τρέξτε 'sudo pkg install mpv' για να εγκαταστήσετε τον mpv player"
 		echo "ή 'sudo pkg install mpg123' για να εγκαταστήσετε τον mpg123 player"
