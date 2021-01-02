@@ -483,6 +483,7 @@ while true; do
 	fi
 
 	while true; do
+		trap '{ clear; echo  "Έξοδος..."; tput cnorm -- normal; exit 1; }' SIGINT
 		clear
 		info
 		sleep 0
