@@ -384,7 +384,7 @@ done
 
 ### Base script
 # Έλεγχος προαπαιτούμενων binaries
-player=$( (command -v mpg1234 2>/dev/null && echo "mpg123") || (command -v mspv 2>/dev/null && echo "mpv") || echo "1" )
+player=$( (command -v mpg123 2>/dev/null && echo "mpg123") || (command -v mpv 2>/dev/null && echo "mpv") || echo "1" )
 
 if [[ "$player" = "1" ]]; then
 	echo "Έλεγχος προαπαιτούμενων για το Shelldio"
