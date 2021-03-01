@@ -242,9 +242,9 @@ joker() {
 	local lines=0
 	local stations="$all_stations"
 	while IFS='' read -r line || [[ -n "$line" ]]; do
-		lines=$(( $lines + 1 ))
-	done < $stations
-	station_number=$(( $RANDOM % $lines  )) #Διάλεξε τυχαίο σταθμό
+		lines=$(( lines + 1 ))
+	done < "$stations"
+	station_number=$(( RANDOM % lines  )) #Διάλεξε τυχαίο σταθμό
 	validate_station_lists
 
 	while true; do
@@ -272,7 +272,6 @@ joker() {
 				tput cnorm -- normal # Εμφάνιση cursor
 				exit 0
 			else
-				echo $st
 				station=$(sed "${station_number}q;d" "$stations")
 				selected_play=$station_number # για να εμφανίζει το αριθμό που επέλεξε ο χρήστης στον Player UI
 				stathmos_name=$(echo "$station" | cut -d "," -f1)
@@ -305,7 +304,7 @@ joker() {
 						printf "Απέτυχε ο αυτόματος τερματισμός. \nΠάτα τον συνδυασμό Ctrl+C ή κλείσε το τερματικό \nή τερμάτισε το Shelldio απο τις διεργασίες του συστήματος"
 					fi
 				done
-				station_number=$(( $RANDOM % $lines  ))
+				station_number=$(( RANDOM % lines  ))
 				break
 			fi
 		done
