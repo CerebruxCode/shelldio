@@ -235,6 +235,91 @@ new_station() {
 		exit 0
 	fi
 }
+joker() {
+
+	local lines=0
+	while IFS='' read -r line || [[ -n "$line" ]]; do
+		lines=$(( $lines + 1 ))
+	done < $all_stations
+	station_number=$(( $RANDOM % $lines  ))
+	validate_station_lists
+
+while true; do
+	echo hi
+	terms=0
+	trap ' [ $terms = 1 ] || { terms=1; kill -TERM -$$; };  exit' EXIT INT HUP TERM QUIT
+
+	if [ -d "$HOME/.shelldio/" ]; then
+		if [ ! -f "$all_stations" ]; then
+			echo "Δεν ήταν δυνατή η εύρεση του αρχείου σταθμών. Γίνεται η λήψη του..."
+			sleep 2
+			curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
+			stations="$all_stations"
+		fi
+	else
+		echo "Δημιουργείται ο κρυφός φάκελος .shelldio ο οποίος θα περιέχει τα αρχεία των σταθμών."
+		sleep 2
+		mkdir -p "$HOME/.shelldio"
+		echo "Γίνεται η λήψη του αρχείου με όλους τους σταθμούς."
+		sleep 2
+		curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
+		stations="$all_stations"
+	fi
+
+	while true; do
+			#input_play="$1"
+			shift # αφαιρούμε το cli argument ώστε να μπορεί ζητήσει από STDIN αν δωθεί 'r' στη συνέχεια (reload)
+		if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
+			echo "Έξοδος..."
+			tput cnorm -- normal # Εμφάνιση cursor
+			exit 0
+			station=$(sed "${station_number}q;d" "$stations")
+			selected_play=$station_number # για να εμφανίζει το αριθμό που επέλεξε ο χρήστης στον Player UI
+			stathmos_name=$(echo "$station" | cut -d "," -f1)
+			stathmos_url=$(echo "$station" | cut -d "," -f2)
+			break
+		fi
+	done
+
+	mpv "$stathmos_url" &>/dev/null &
+
+	while true; do
+		trap '{ clear; echo  "Έξοδος..."; tput cnorm -- normal; exit 1; }' SIGINT
+		clear
+		info
+		sleep 0
+		read -r -n1 -t1 input_play # Για μικρότερη αναμονή της read
+		if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
+			clear
+			echo "Έξοδος..."
+			tput cnorm -- normal # Εμφάνιση cursor
+			exit 0
+		elif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
+			for pid in $(pgrep '^mpv$'); do
+				url="$(ps -o command= -p "$pid" | awk '{print $2}')"
+				if [[ "$url" == "$stathmos_url" ]]; then
+					echo "Έξοδος..."
+					tput cnorm -- normal # Εμφάνιση cursor
+					kill "$pid"
+				else
+					printf "Απέτυχε ο αυτόματος τερματισμός. \nΠάτα τον συνδυασμό Ctrl+C ή κλείσε το τερματικό \nή τερμάτισε το Shelldio απο τις διεργασίες του συστήματος"
+				fi
+			done
+			#clear
+			#echo "Επιστροφή στη λίστα σταθμών"
+			#tput cnorm -- normal # Εμφάνιση cursor
+			#sleep 1
+			#clear
+			station_number=$(( $RANDOM % $lines  ))
+			break
+		fi
+
+	done
+
+done
+
+
+}
 
 reset_favorites() {
 	if [ ! -f "$my_stations" ]; then
@@ -345,6 +430,10 @@ while [ "$1" != "" ]; do
 		validate_station_lists
 		new_station
 		validate_station_lists
+		exit 0
+		;;
+	-j | --joker)
+		joker
 		exit 0
 		;;
 	-r | --remove)
