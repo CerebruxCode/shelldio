@@ -249,6 +249,19 @@ joker_info() {
 }
 
 
+joker_info() {
+	welcome_screen
+	tput civis -- invisible # Απόκρυψη cursor
+	echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $(date +"%T")\n"
+	echo -ne " \n"
+	echo -ne "  Ακούτε: $stathmos_name\n"
+	echo -ne "\n"
+	echo -ne "   ____________               ___________\n"
+	echo -ne "  [Έξοδος (Q/q)].___________.[Νέα τυχαία επιλογή  (R/r)]\n"
+	echo -ne " "
+}
+
+
 joker() {
 
 	local lines=0
