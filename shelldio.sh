@@ -236,18 +236,6 @@ new_station() {
 	fi
 }
 
-joker_info() {
-	welcome_screen
-	tput civis -- invisible # Απόκρυψη cursor
-	echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $(date +"%T")\n"
-	echo -ne " \n"
-	echo -ne "  Ακούτε: $stathmos_name\n"
-	echo -ne "\n"
-	echo -ne "   ____________               ___________\n"
-	echo -ne "  [Έξοδος (Q/q)].___________.[Νέα τυχαία επιλογή  (R/r)]\n"
-	echo -ne " "
-}
-
 
 joker_info() {
 	welcome_screen
@@ -531,15 +519,13 @@ while true; do
 		stations="$all_stations"
 	fi
 
-	nextPrevious=0
 	while true; do
 		welcome_screen
-		if [ $nextPrevious -eq "0" ]; then
-			num=0
-			list_stations "$stations"
-		fi
 
-		if [ "$#" -eq "0" ] && [ $nextPrevious -eq "0" ]; then # στην περίπτωση που δε δοθεί όρισμα εμφάνισε τη λίστα σταθμών
+		num=0
+		list_stations "$stations"
+
+		if [ "$#" -eq "0" ]; then # στην περίπτωση που δε δοθεί όρισμα εμφάνισε τη λίστα σταθμών
 			if [ ! -f "$my_stations" ]; then
 				echo "Από προεπιλογή η λίστα σταθμών περιέχει όλους τους σταθμούς."
 				echo "Μπορείς να δημιουργήσεις ένα αρχείο με τους αγαπημένους σου σταθμούς."
@@ -552,7 +538,7 @@ while true; do
 			fi
 			echo "--------------------------------------------"
 			read -rp "Διαλέξτε Σταθμό (ή Q/q για έξοδο): " input_play
-		elif [[ $nextPrevious -eq "0" ]]; then
+		else
 			input_play="$1"
 			shift # αφαιρούμε το cli argument ώστε να μπορεί ζητήσει από STDIN αν δωθεί 'r' στη συνέχεια (reload)
 		fi
@@ -587,10 +573,6 @@ while true; do
 			echo "Έξοδος..."
 			tput cnorm -- normal # Εμφάνιση cursor
 			exit 0
-		elif [[ $input_play = "n" ]]; then
-			input_play=$((selected_play + 1))
-			nextPrevious=1
-			break
 		elif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
 			for pid in $(pgrep '^mpv$'); do
 				url="$(ps -o command= -p "$pid" | awk '{print $2}')"
@@ -603,7 +585,7 @@ while true; do
 				fi
 			done
 			clear
-			echo "hihiΕπιστροφή στη λίστα σταθμών"
+			echo "Επιστροφή στη λίστα σταθμών"
 			tput cnorm -- normal # Εμφάνιση cursor
 			sleep 1
 			clear
