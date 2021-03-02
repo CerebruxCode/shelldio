@@ -237,14 +237,27 @@ new_station() {
 }
 
 
+joker_info() {
+	welcome_screen
+	tput civis -- invisible # Απόκρυψη cursor
+	echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $(date +"%T")\n"
+	echo -ne " \n"
+	echo -ne "  Ακούτε: $stathmos_name\n"
+	echo -ne "\n"
+	echo -ne "   ____________               ___________\n"
+	echo -ne "  [Έξοδος (Q/q)].___________.[Νέα τυχαία επιλογή  (R/r)]\n"
+	echo -ne " "
+}
+
+
 joker() {
 
 	local lines=0
 	local stations="$all_stations"
 	while IFS='' read -r line || [[ -n "$line" ]]; do
-		lines=$(( $lines + 1 ))
-	done < $stations
-	station_number=$(( $RANDOM % $lines  )) #Διάλεξε τυχαίο σταθμό
+		lines=$(( lines + 1 ))
+	done < "$stations"
+	station_number=$(( RANDOM % lines  )) #Διάλεξε τυχαίο σταθμό
 	validate_station_lists
 
 	while true; do
@@ -272,7 +285,6 @@ joker() {
 				tput cnorm -- normal # Εμφάνιση cursor
 				exit 0
 			else
-				echo $st
 				station=$(sed "${station_number}q;d" "$stations")
 				selected_play=$station_number # για να εμφανίζει το αριθμό που επέλεξε ο χρήστης στον Player UI
 				stathmos_name=$(echo "$station" | cut -d "," -f1)
@@ -286,7 +298,7 @@ joker() {
 		while true; do
 			trap '{ clear; echo  "Έξοδος..."; tput cnorm -- normal; exit 1; }' SIGINT
 			clear
-			info
+			joker_info
 			sleep 0
 			read -r -n1 -t1 input_play # Για μικρότερη αναμονή της read
 			if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
@@ -305,7 +317,7 @@ joker() {
 						printf "Απέτυχε ο αυτόματος τερματισμός. \nΠάτα τον συνδυασμό Ctrl+C ή κλείσε το τερματικό \nή τερμάτισε το Shelldio απο τις διεργασίες του συστήματος"
 					fi
 				done
-				station_number=$(( $RANDOM % $lines  ))
+				station_number=$(( RANDOM % lines  ))
 				break
 			fi
 		done
