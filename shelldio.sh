@@ -137,7 +137,7 @@ list_stations() {
 # Πληροφορίες που εμφανίζονται μετά την επιλογή του σταθμού
 info() {
 	welcome_screen
-	tput civis -- invisible # Εξαφάνιση cursor
+	tput civis # Εξαφάνιση cursor
 	echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $(date +"%T")\n"
 	echo -ne " \n"
 	echo -ne "  Ακούτε: $stathmos_name\n"
@@ -436,7 +436,7 @@ while true; do
 
 		if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
 			echo "Έξοδος..."
-			tput cnorm -- normal # Εμφάνιση cursor
+			tput cnorm # Εμφάνιση cursor
 			exit 0
 		elif [ "$input_play" -gt 0 ] && [ "$input_play" -le $num ]; then #έλεγχος αν το input είναι μέσα στο εύρος της λίστας των σταθμών
 			station=$(sed "${input_play}q;d" "$stations")
@@ -461,14 +461,14 @@ while true; do
 		if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
 			clear
 			echo "Έξοδος..."
-			tput cnorm -- normal # Εμφάνιση cursor
+			tput cnorm # Εμφάνιση cursor
 			exit 0
 		elif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
 			for pid in $(pgrep '^mpv$'); do
 				url="$(ps -o command= -p "$pid" | awk '{print $2}')"
 				if [[ "$url" == "$stathmos_url" ]]; then
 					echo "Έξοδος..."
-					tput cnorm -- normal # Εμφάνιση cursor
+					tput cnorm # Εμφάνιση cursor
 					kill "$pid"
 				else
 					printf "Απέτυχε ο αυτόματος τερματισμός. \nΠάτα τον συνδυασμό Ctrl+C ή κλείσε το τερματικό \nή τερμάτισε το Shelldio απο τις διεργασίες του συστήματος"
@@ -476,7 +476,7 @@ while true; do
 			done
 			clear
 			echo "Επιστροφή στη λίστα σταθμών"
-			tput cnorm -- normal # Εμφάνιση cursor
+			tput cnorm # Εμφάνιση cursor
 			sleep 1
 			clear
 			break
