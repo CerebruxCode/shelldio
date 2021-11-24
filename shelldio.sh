@@ -15,17 +15,17 @@
 
 ### Colors
 if [ -t 1 ]; then
-  RED=$(printf '\033[31m')
-  BLUE=$(printf '\033[34m')
-  RESET=$(printf '\033[m')
+	RED=$(printf '\033[31m')
+	BLUE=$(printf '\033[34m')
+	RESET=$(printf '\033[m')
 else
-  RED=""
-  BLUE=""
-  RESET=""
+	RED=""
+	BLUE=""
+	RESET=""
 fi
 
 ### Variable List
-version="v3.0.0  " # this space after the version num is intentional to fix UI
+version="v4.0.1  " # this space after the version num is intentional to fix UI
 
 all_stations="$HOME/.shelldio/all_stations.txt"
 my_stations="$HOME/.shelldio/my_stations.txt"
@@ -137,6 +137,7 @@ list_stations() {
 # Πληροφορίες που εμφανίζονται μετά την επιλογή του σταθμού
 info() {
 	welcome_screen
+
 	tput civis # Εξαφάνιση cursor
 	echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $(date +"%T")\n"
 	echo -ne " \n"
@@ -214,23 +215,26 @@ mpv_msg() {
 		echo "https://mpv.io/installation/"
 	fi
 }
-new_station () {
-	echo "Εμφάνιση λίστας σταθμών"
-	sleep 1
-	list_stations "$my_stations"
-	while true; do
-		read -rp "Δώσε όνομα νέου σταθμού  (Q/q για έξοδο): " station_name
-		if [[ $station_name = "q" ]] || [[ $station_name = "Q" ]]; then
-			echo "Έξοδος..."
-			exit 0
-		fi
-		read -rp "Δώσε url νέου σταθμού: " station_url
-		echo "$station_name,$station_url" >>"$my_stations"
-		echo " Προστέθηκε ο σταθμός $station_name."
-  
-	done
-	exit 0
-
+new_station() {
+	if [ ! -f "$HOME/.shelldio/my_stations.txt" ]; then
+		echo "Δεν έχει δημιουργηθεί το αρχείο my_stations."
+		echo "Για πληροφορίες τρέξε την παράμετρο --help."
+	else
+		echo "Εμφάνιση λίστας προσωπικών σταθμών"
+		sleep 1
+		list_stations "$my_stations"
+		while true; do
+			read -rp "Δώσε όνομα νέου σταθμού (ή δώσε Q/q για έξοδο): " station_name
+			if [[ $station_name = "q" ]] || [[ $station_name = "Q" ]]; then
+				echo "Έξοδος..."
+				exit 0
+			fi
+			read -rp "Δώσε url νέου σταθμού: " station_url
+			echo "$station_name,$station_url" >>"$my_stations"
+			echo " Προστέθηκε ο σταθμός $station_name."
+		done
+		exit 0
+	fi
 }
 
 reset_favorites() {
@@ -260,6 +264,19 @@ reset_favorites() {
 	exit 0
 }
 
+git_updater() {
+	if [[ -L "/usr/local/bin/shelldio" ]]; then
+		printf "Το Shelldio έχει εγκατασταθεί σωστά μέσω git\n"
+		RETURN_TO_PWD=$(pwd)
+		basedir="$(dirname "$(readlink /usr/local/bin/shelldio)")"
+		cd "$basedir" || return
+		self_update
+		cd "$RETURN_TO_PWD" || exit 0
+	else
+		echo "To Shelldio δεν έχει εγκατασταθεί μέσω git clone οπότε δεν είναι διαθέσιμη η ενημέρωση μέσω shelldio -u"
+	fi
+}
+
 self_update() {
 	if ! command -v git &>/dev/null; then
 		return
@@ -274,7 +291,8 @@ self_update() {
 		else
 			printf "${RED}%s${RESET}\n" 'Κάποιο πρόβλημα παρουσιάστηκε κατά την αναβάθμιση. Δοκίμασε ξανά αργότερα'
 		fi
-		exit ;;
+		exit
+		;;
 	[Nn]*) exit ;;
 	*) echo "Παρακαλώ απαντήστε με y (ναι) ή n (όχι)" ;;
 	esac
@@ -350,7 +368,7 @@ while [ "$1" != "" ]; do
 		exit 0
 		;;
 	-u | --update)
-		self_update
+		git_updater
 		;;
 	*)
 		echo "Λάθος επιλογή."
@@ -454,6 +472,7 @@ while true; do
 	mpv "$stathmos_url" &>/dev/null &
 
 	while true; do
+		trap '{ clear; echo  "Έξοδος..."; tput cnorm -- normal; exit 1; }' SIGINT
 		clear
 		info
 		sleep 0
