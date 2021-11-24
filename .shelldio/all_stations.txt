@@ -45,6 +45,7 @@ Kiss Extra FM Patra,http://stream.kiisextra.gr:48500/kiis.mp3
 Kiss FM 92.9,https://kissfm.live24.gr/kissfmathens
 Kiss FM Athens,https://kissfm.live24.gr/kiss2111
 KLIK FM Rodos,http://www.111.gr:8042
+Kriti FM,https://mediacp.32bit.gr:8018/stream
 Legend 88.6,http://netradio.live24.gr:80/886athens
 Libero 107.4,http://eco.onestreaming.com:8081/
 Liquid FM,http://ice.streamcloud.mediacdn.com:80/freeradio-1000
@@ -63,6 +64,7 @@ North 98,https://netradio.live24.gr/north98thess
 Nostos 100.6,https://neos.win:37878/stream
 Off Radio,http://46.28.53.118:7062/stream
 Party FM 104,https://radio.streamings.gr:9006/stream
+Patra youfm 100.1,http://www.youfmradio.gr:8880/stream
 Pepper 96.6,https://pepper966.live24.gr/pepperorigin
 Piqeras DeeJay 105.6,http://rosetta.shoutca.st:8270/stream
 Plus Radio 102.6,http://plusradio.gr/stream1
@@ -88,11 +90,11 @@ Status FM 107.7,http://148.251.179.119:8000/stream
 Studio 3 103.5,http://s1.onweb.gr:8408
 Styl FM 104.9,http://s3.onweb.gr:8530/;
 ThessRadio,http://noc.ezhellas.com:30570/zbutsam
+The Press Project,https://n13.radiojar.com/qgra821mrtwtv
 Velvet 96.8,https://netradio.live24.gr/velvet968thess
 Venus Amaliada Alt.,http://s3.onweb.gr:8808
 Venus Amaliada,http://eco.onestreaming.com:8171
 V FM 91.1,http://176.9.184.196:8177/stream
-Wave Patra (Rock),http://live.webhosting4u.gr:8007
 We Radio 89.4,https://radioservers.xyz/we-894-live
 Yellow Radio 92.8,http://radio.streamings.gr:8009/stream
 Yes Patra 91.2,http://5.9.17.142:8024
@@ -111,6 +113,7 @@ Zoo Radio 90.8,https://netradio.live24.gr/zoo908thess
 Θέμα Radio 104.6,http://stream.radiojar.com:80/cdk030dsvv5tv
 Καλαμαριά FM 101.7,http://sc.greekstream.net:80/;.mp3
 Κανάλι 1 – Δημοτική Ραδιοφωνία Πειραιά 90.4,https://netradio.live24.gr/kanali1peiraia
+Κοινωνικό Ραδιόφωνο Χανίων KPaX Radio,http://78.47.193.254:8006/stream
 Κρήτη FM 87.5,http://s3.onweb.gr:8878
 Λαϊκός FM 87.6,https://netradio.live24.gr/laikos876
 Λάμψη FM 92.3,hls://lampsifmlive.mdc.akamaized.net/strmLampsi/userLampsi/playlist.m3u8
@@ -118,10 +121,12 @@ Zoo Radio 90.8,https://netradio.live24.gr/zoo908thess
 Λύρα FM 91.4,http://172.93.237.106:8271/stream
 Μελωδία 99.2,http://netradio
 Μέντα FM 88.0,http://ample-02.radiojar.com:80/menta
+Μεταδεύτερο FM,https://live.metadeftero.gr/stream
 Μινόρε FM .,https://minorefm.live24.gr/minorefm
 Μουσικός 98.6,https://netradio.live24.gr/mousikos986
 Μύθος FM 93.4,http://s2.free-shoutcast.com:18560/stream
 Ορθόδοξη Παρουσία 106.8,http://www.gwebstream.net:8008/stream
+Πανεπιστημίου Κρήτης (Ηράκλειο) RastaPank 96.7 FM,https://rs.radio.uoc.gr:8001/uoc_128.ogg
 Πανόραμα 98.4,https://netradio.live24.gr/panorama984
 Παραπολιτικά FM 90.1,https://netradio.live24.gr/athinaradio
 Πειρατικός FM 99.5,http://148.251.162.206:9800/stream
