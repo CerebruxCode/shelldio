@@ -45,6 +45,7 @@ Kiss Extra FM Patra,http://stream.kiisextra.gr:48500/kiis.mp3
 Kiss FM 92.9,https://kissfm.live24.gr/kissfmathens
 Kiss FM Athens,https://kissfm.live24.gr/kiss2111
 KLIK FM Rodos,http://www.111.gr:8042
+Kriti FM,https://mediacp.32bit.gr:8018/stream
 Legend 88.6,http://netradio.live24.gr:80/886athens
 Libero 107.4,http://eco.onestreaming.com:8081/
 Liquid FM,http://ice.streamcloud.mediacdn.com:80/freeradio-1000
@@ -94,7 +95,6 @@ Velvet 96.8,https://netradio.live24.gr/velvet968thess
 Venus Amaliada Alt.,http://s3.onweb.gr:8808
 Venus Amaliada,http://eco.onestreaming.com:8171
 V FM 91.1,http://176.9.184.196:8177/stream
-Wave Patra (Rock),http://live.webhosting4u.gr:8007
 We Radio 89.4,https://radioservers.xyz/we-894-live
 Yellow Radio 92.8,http://radio.streamings.gr:8009/stream
 Yes Patra 91.2,http://5.9.17.142:8024
