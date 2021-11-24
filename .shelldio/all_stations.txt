@@ -63,6 +63,7 @@ North 98,https://netradio.live24.gr/north98thess
 Nostos 100.6,https://neos.win:37878/stream
 Off Radio,http://46.28.53.118:7062/stream
 Party FM 104,https://radio.streamings.gr:9006/stream
+Patra youfm 100.1,http://www.youfmradio.gr:8880/stream
 Pepper 96.6,https://pepper966.live24.gr/pepperorigin
 Piqeras DeeJay 105.6,http://rosetta.shoutca.st:8270/stream
 Plus Radio 102.6,http://plusradio.gr/stream1
