@@ -25,7 +25,7 @@ else
 fi
 
 ### Variable List
-version="v4.0.1  " # this space after the version num is intentional to fix UI
+version="v4.2.0  " # this space after the version num is intentional to fix UI
 
 all_stations="$HOME/.shelldio/all_stations.txt"
 my_stations="$HOME/.shelldio/my_stations.txt"
@@ -106,6 +106,8 @@ option_detail() {
 			ραδιοφωνικούς σταθμούς, διορθωμένα links αλλά και νέους ραδιοφωνικούς σταθμούς
 	
 	-h, --help: 	Εμφανίζει αυτές τις πληροφορίες για την χρήση της εφαρμογής
+	
+	-j, --joker: 	Ξεκινάει την αναπαραγωγή τυχαίου σταθμού
 	
 	-l, --list: 	Εμφανίζει την γενική λίστα με τους ραδιοφωνικούς σταθμούς. Μπορείτε να χρησιμοποιήσετε
 			την επιλογή αυτή σε συνδυασμό με άλλη εντολή. πχ. για να κάνετε αναζήτηση :
@@ -237,10 +239,9 @@ new_station() {
 	fi
 }
 
-
 joker_info() {
 	welcome_screen
-	tput civis -- invisible # Απόκρυψη cursor
+	tput civis # Απόκρυψη cursor
 	echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $(date +"%T")\n"
 	echo -ne " \n"
 	echo -ne "  Ακούτε: $stathmos_name\n"
@@ -250,15 +251,14 @@ joker_info() {
 	echo -ne " "
 }
 
-
 joker() {
 
 	local lines=0
 	local stations="$all_stations"
 	while IFS='' read -r line || [[ -n "$line" ]]; do
-		lines=$(( lines + 1 ))
-	done < "$stations"
-	station_number=$(( RANDOM % lines  )) #Διάλεξε τυχαίο σταθμό
+		lines=$((lines + 1))
+	done <"$stations"
+	station_number=$((RANDOM % lines)) #Διάλεξε τυχαίο σταθμό
 	validate_station_lists
 
 	while true; do
@@ -283,13 +283,13 @@ joker() {
 		while true; do
 			if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
 				echo "Έξοδος..."
-				tput cnorm -- normal # Εμφάνιση cursor
+				tput cnorm # Εμφάνιση cursor
 				exit 0
 			else
 				station=$(sed "${station_number}q;d" "$stations")
 				selected_play=$station_number # για να εμφανίζει το αριθμό που επέλεξε ο χρήστης στον Player UI
 				stathmos_name=$(echo "$station" | cut -d "," -f1)
-				stathmos_url=$(echo "$station" | cut -d "," -f2)		
+				stathmos_url=$(echo "$station" | cut -d "," -f2)
 				break
 			fi
 		done
@@ -297,7 +297,7 @@ joker() {
 		mpv "$stathmos_url" &>/dev/null &
 
 		while true; do
-			trap '{ clear; echo  "Έξοδος..."; tput cnorm -- normal; exit 1; }' SIGINT
+			trap '{ clear; echo  "Έξοδος..."; tput cnorm; exit 1; }' SIGINT
 			clear
 			joker_info
 			sleep 0
@@ -305,20 +305,20 @@ joker() {
 			if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
 				clear
 				echo "Έξοδος..."
-				tput cnorm -- normal # Εμφάνιση cursor
+				tput cnorm # Εμφάνιση cursor
 				exit 0
 			elif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
 				for pid in $(pgrep '^mpv$'); do
 					url="$(ps -o command= -p "$pid" | awk '{print $2}')"
 					if [[ "$url" == "$stathmos_url" ]]; then
 						echo "Έξοδος..."
-						tput cnorm -- normal # Εμφάνιση cursor
+						tput cnorm # Εμφάνιση cursor
 						kill "$pid"
 					else
 						printf "Απέτυχε ο αυτόματος τερματισμός. \nΠάτα τον συνδυασμό Ctrl+C ή κλείσε το τερματικό \nή τερμάτισε το Shelldio απο τις διεργασίες του συστήματος"
 					fi
 				done
-				station_number=$(( RANDOM % lines  ))
+				station_number=$((RANDOM % lines))
 				break
 			fi
 		done
@@ -565,7 +565,7 @@ while true; do
 	mpv "$stathmos_url" &>/dev/null &
 
 	while true; do
-		trap '{ clear; echo  "Έξοδος..."; tput cnorm -- normal; exit 1; }' SIGINT
+		trap '{ clear; echo  "Έξοδος..."; tput cnorm; exit 1; }' SIGINT
 		clear
 		info
 		sleep 0
