@@ -113,6 +113,7 @@ Zoo Radio 90.8,https://netradio.live24.gr/zoo908thess
 Θέμα Radio 104.6,http://stream.radiojar.com:80/cdk030dsvv5tv
 Καλαμαριά FM 101.7,http://sc.greekstream.net:80/;.mp3
 Κανάλι 1 – Δημοτική Ραδιοφωνία Πειραιά 90.4,https://netradio.live24.gr/kanali1peiraia
+Κοινωνικό Ραδιόφωνο Χανίων KPaX Radio,http://78.47.193.254:8006/stream
 Κρήτη FM 87.5,http://s3.onweb.gr:8878
 Λαϊκός FM 87.6,https://netradio.live24.gr/laikos876
 Λάμψη FM 92.3,hls://lampsifmlive.mdc.akamaized.net/strmLampsi/userLampsi/playlist.m3u8
@@ -120,10 +121,12 @@ Zoo Radio 90.8,https://netradio.live24.gr/zoo908thess
 Λύρα FM 91.4,http://172.93.237.106:8271/stream
 Μελωδία 99.2,http://netradio
 Μέντα FM 88.0,http://ample-02.radiojar.com:80/menta
+Μεταδεύτερο FM,https://live.metadeftero.gr/stream
 Μινόρε FM .,https://minorefm.live24.gr/minorefm
 Μουσικός 98.6,https://netradio.live24.gr/mousikos986
 Μύθος FM 93.4,http://s2.free-shoutcast.com:18560/stream
 Ορθόδοξη Παρουσία 106.8,http://www.gwebstream.net:8008/stream
+Πανεπιστημίου Κρήτης (Ηράκλειο) RastaPank 96.7 FM,https://rs.radio.uoc.gr:8001/uoc_128.ogg
 Πανόραμα 98.4,https://netradio.live24.gr/panorama984
 Παραπολιτικά FM 90.1,https://netradio.live24.gr/athinaradio
 Πειρατικός FM 99.5,http://148.251.162.206:9800/stream
