@@ -89,6 +89,7 @@ Status FM 107.7,http://148.251.179.119:8000/stream
 Studio 3 103.5,http://s1.onweb.gr:8408
 Styl FM 104.9,http://s3.onweb.gr:8530/;
 ThessRadio,http://noc.ezhellas.com:30570/zbutsam
+The Press Project,https://n13.radiojar.com/qgra821mrtwtv
 Velvet 96.8,https://netradio.live24.gr/velvet968thess
 Venus Amaliada Alt.,http://s3.onweb.gr:8808
 Venus Amaliada,http://eco.onestreaming.com:8171
