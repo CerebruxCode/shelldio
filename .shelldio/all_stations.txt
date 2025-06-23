@@ -38,6 +38,7 @@ Focus FM 103.6,http://focus.greekstream.net:80/
 Fresh Salad 96.1,http://178.33.135.246:5262/stream
 Galaxy 92,https://galaxy.live24.gr/galaxy9292
 Groove Radio,http://213.239.206.179:8090/stream
+Happy Radio FM 104,https://ath10400fm.live24.gr/ath10400fm
 Heat Radio,https://solid67.streamupsolutions.com/proxy/qrynsxmv
 Hot FM ,https://hotfm.live24.gr/hotfm
 Imagine 89.7,https://eu9.fastcast4u.com/proxy/nicperet?mp=/1
