@@ -10,6 +10,7 @@ Amagi Radio,http://amagiradio.com:8000/stream
 Art FM 90.6,http://167.114.246.249:8023/stream
 Athens 106.5,http://148.251.162.206:9400/stream
 Athens DJ 95.2,https://netradio.live24.gr/athensdeejay
+Athens Free Radio,http://n08.radiojar.com/e206r95qsp8uv
 Athens Voice 102.5,https://nitro.live24.gr/nitro4555
 Atlantis FM 105.2,http://85.10.206.222:8012
 Bar Legend Radio,https://solid24.streamupsolutions.com:2199/tunein/nilxzqeg.pls
