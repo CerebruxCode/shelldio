@@ -255,6 +255,7 @@ joker() {
 
 	local lines=0
 	local stations="$all_stations"
+	local station_number
 	while IFS='' read -r line || [[ -n "$line" ]]; do
 		lines=$((lines + 1))
 	done <"$stations"
