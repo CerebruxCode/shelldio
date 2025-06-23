@@ -259,7 +259,7 @@ joker() {
 	while IFS='' read -r line || [[ -n "$line" ]]; do
 		lines=$((lines + 1))
 	done <"$stations"
-	station_number=$((RANDOM % lines)) #Διάλεξε τυχαίο σταθμό
+	station_number=$(( (RANDOM % lines) + 1 )) #Διάλεξε τυχαίο σταθμό (ξεκινάει από 1)
 	validate_station_lists
 
 	while true; do
@@ -319,7 +319,7 @@ joker() {
 						printf "Απέτυχε ο αυτόματος τερματισμός. \nΠάτα τον συνδυασμό Ctrl+C ή κλείσε το τερματικό \nή τερμάτισε το Shelldio απο τις διεργασίες του συστήματος"
 					fi
 				done
-				station_number=$((RANDOM % lines))
+				station_number=$(( (RANDOM % lines) + 1 ))
 				break
 			fi
 		done
