@@ -9,4 +9,4 @@ jobs:
     - name: Install csvkit
       run: pip install csvkit
     - name: Lint CSV file
-      run: csvclean .shelldio/all_stations.txt
+      run: csvclean --validate .shelldio/all_stations.txt
