@@ -482,7 +482,7 @@ if [[ $player = 1 ]]; then
 	mpv_msg
 	exit 1
 fi
-for binary in grep curl info sleep clear killall; do
+for binary in grep curl info sleep clear psmisc; do
 	if ! command -v $binary &>/dev/null; then
 		echo -e "Το Shelldio χρειάζεται το '$binary'\nΠαρακαλούμε εγκαταστήστε το πριν τρέξετε το Shelldio"
 		exit 1
