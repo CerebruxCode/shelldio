@@ -81,7 +81,7 @@ Red FM 96.3,https://stream.rcs.revma.com/e4d84zez1duvv
 Real FM 107.1,https://realfmthess.live24.gr/realthess
 Real FM 97.8,https://realfm.live24.gr/realfm
 Republic Radio ,https://netradio.live24.gr/republicthess
-Rock FM 96.9,hls://rockfmlive.mdc.akamaized.net/strmRCFm/userRCFm/playlist.m3u8
+Rock FM 96.9,https://az10.yesstreaming.net/radio/8060/radio.mp3
 Rock Radio 104.7,http://188.165.248.218:8013/stream
 RSO 91.7,http://tachyon.shoutca.st:8594
 Rythmos στούς 94.9,http://rythmos.live24.gr:80/rythmos
@@ -121,7 +121,7 @@ Zoo Radio 90.8,https://netradio.live24.gr/zoo908thess
 Κοινωνικό Ραδιόφωνο Χανίων KPaX Radio,https://c32.radioboss.fm:18563/stream
 Κρήτη FM 87.5,http://s3.onweb.gr:8878
 Λαϊκός FM 87.6,https://netradio.live24.gr/laikos876
-Λάμψη FM 92.3,hls://lampsifmlive.mdc.akamaized.net/strmLampsi/userLampsi/playlist.m3u8
+Λάμψη FM 92.3,https://az11.yesstreaming.net:8140/radio.mp3
 Λυδία η Φιλιππησία 94.2,http://82.192.84.30:1086/stream
 Λύρα FM 91.4,http://172.93.237.106:8271/stream
 Ματζόρε Πανεπιστημίου Κρήτης (Ρέθυμνο) 89.1 FM,https://rs.radio.uoc.gr:8001/matzore_64.ogg
