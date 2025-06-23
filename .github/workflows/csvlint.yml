@@ -7,7 +7,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install csvkit
-        run: pip install csvkit
-      - name: Validate CSV file with csvclean
-        run: csvclean .shelldio/all_stations.txt
+      - name: Validate CSV structure
+        run: |
+          python3 <<EOF
+          import sys, re
+          with open('.shelldio/all_stations.txt') as f:
+              for i, line in enumerate(f, 1):
+                  parts = [p.strip() for p in line.strip().split(',', 1)]
+                  if len(parts) != 2 or not parts[0] or not parts[1]:
+                      print(f"Line {i} is invalid: {line.strip()}")
+                      sys.exit(1)
+                  if not re.match(r'https?://', parts[1]):
+                      print(f"Line {i} has invalid URL: {parts[1]}")
+                      sys.exit(1)
+          EOF
