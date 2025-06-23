@@ -15,27 +15,13 @@
 
 ### Colors
 if [ -t 1 ]; then
-	RED=$(printf '\033[31m')
-	BLUE=$(printf '\033[34m')
-	RESET=$(printf '\033[m')
+    RED=$(printf '\033[31m')
+    BLUE=$(printf '\033[34m')
+    RESET=$(printf '\033[m')
 else
-	RED=""
-	BLUE=""
-	RESET=""
-fielif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
-	for pid in $(pgrep '^mpv$'); do
-		url="$(ps -o command= -p "$pid" | awk '{print $2}')"
-		if [[ "$url" == "$stathmos_url" ]]; then
-			kill "$pid"
-		fi
-	done
-	clear
-	echo "Επιστροφή στη λίστα σταθμών"
-	tput cnorm # Εμφάνιση cursor
-	sleep 1
-	clear
-	input_play=""   # <--- Reset input_play to avoid infinite reload
-	break           # <--- Break to outer loop to show the list again
+    RED=""
+    BLUE=""
+    RESET=""
 fi
 
 ### Variable List
