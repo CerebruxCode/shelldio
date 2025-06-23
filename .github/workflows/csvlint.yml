@@ -8,5 +8,5 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install csvkit
       run: pip install csvkit
-    - name: Lint CSV file
-      run: csvclean --validate .shelldio/all_stations.txt
+    - name: Validate CSV file with csvformat
+      run: csvformat .shelldio/all_stations.txt > /dev/null
