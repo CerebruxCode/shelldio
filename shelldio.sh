@@ -332,7 +332,7 @@ reset_favorites() {
 	fi
 
 	while true; do
-		read -rp "Θες σίγουρα να διαγράψεις το αρχείο αγαπημένων; (y/n)" yn
+		read -rp "Θελεις σίγουρα να διαγράψεις το αρχείο αγαπημένων; (y/n)" yn
 		case $yn in
 		[Yy]*)
 			rm -f "$my_stations"
