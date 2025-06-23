@@ -302,8 +302,9 @@ joker() {
 			trap '{ clear; echo  "Έξοδος..."; tput cnorm; exit 1; }' SIGINT
 			clear
 			joker_info
-			sleep 0
-			read -r -n1 -t1 input_play # Για μικρότερη αναμονή της read
+			
+			# Use a different approach for reading input
+			read -r -n1 -s input_play
 			
 			if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
 				clear
@@ -312,17 +313,21 @@ joker() {
 				# Kill the current mpv process
 				kill $mpv_pid 2>/dev/null
 				exit 0
-			elif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
+			elif [[ $input_play = "n" ]] || [[ $input_play = "N" ]]; then
 				# Kill current mpv process
 				kill $mpv_pid 2>/dev/null
 				wait $mpv_pid 2>/dev/null
 				
 				# Select new random station
 				station_number=$(( (RANDOM % lines) + 1 ))
+				clear
 				echo "Επιλογή νέου τυχαίου σταθμού..."
 				sleep 1
 				break # Break out of inner loop to start new station
 			fi
+			
+			# Small delay to prevent excessive CPU usage
+			sleep 0.1
 		done
 	done
 }
