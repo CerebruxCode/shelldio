@@ -1,12 +1,13 @@
+name: CSV Lint
+
 on: [push]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: csv lint
     steps:
-    - uses: actions/checkout@v1
-    - name: Install csvkit
-      run: pip install csvkit
-    - name: Validate CSV file with csvformat
-      run: csvformat .shelldio/all_stations.txt > /dev/null
+      - uses: actions/checkout@v4
+      - name: Install csvkit
+        run: pip install csvkit
+      - name: Validate CSV file with csvclean
+        run: csvclean -n .shelldio/all_stations.txt
