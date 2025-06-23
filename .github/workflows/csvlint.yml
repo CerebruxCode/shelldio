@@ -10,4 +10,4 @@ jobs:
       - name: Install csvkit
         run: pip install csvkit
       - name: Validate CSV file with csvclean
-        run: csvclean -n .shelldio/all_stations.txt
+        run: csvclean .shelldio/all_stations.txt
