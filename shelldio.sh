@@ -209,25 +209,7 @@ mpv_msg() {
 		echo "Τρέξτε 'sudo yum -y install mpv' για να εγκαταστήσετε τον player"
 	elif uname -a | grep Darwin &>/dev/null; then
 		echo "Τρέξτε 'sudo brew install mpv' για να εγκαταστήσετε τον player"
-	elif uname -a | grep BSD &>/dev/null; then	while true; do
-        welcome_screen
-
-        num=0   # <-- Reset station counter before listing
-        list_stations "$stations"		elif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
-            for pid in $(pgrep '^mpv$'); do
-                url="$(ps -o command= -p "$pid" | awk '{print $2}')"
-                if [[ "$url" == "$stathmos_url" ]]; then
-                    kill "$pid"
-                fi
-            done
-            clear
-            echo "Επιστροφή στη λίστα σταθμών"
-            tput cnorm # Εμφάνιση cursor
-            sleep 1
-            clear
-            input_play=""   # Reset input_play to avoid infinite reload
-            break           # Break to outer loop to show the list again
-        fi
+	elif uname -a | grep BSD &>/dev/null; then
 		echo "Τρέξτε 'sudo pkg install mpv' για να εγκαταστήσετε τον player"
 	else
 		echo "Δεν μπορέσαμε να εντοπίσουμε το λειτουργικό σας σύστημα."
