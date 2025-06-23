@@ -10,6 +10,7 @@ Amagi Radio,http://amagiradio.com:8000/stream
 Art FM 90.6,http://167.114.246.249:8023/stream
 Athens 106.5,http://148.251.162.206:9400/stream
 Athens DJ 95.2,https://netradio.live24.gr/athensdeejay
+Athens Free Radio,http://n08.radiojar.com/e206r95qsp8uv
 Athens Voice 102.5,https://nitro.live24.gr/nitro4555
 Atlantis FM 105.2,http://85.10.206.222:8012
 Bar Legend Radio,https://solid24.streamupsolutions.com:2199/tunein/nilxzqeg.pls
@@ -37,6 +38,8 @@ Focus FM 103.6,http://focus.greekstream.net:80/
 Fresh Salad 96.1,http://178.33.135.246:5262/stream
 Galaxy 92,https://galaxy.live24.gr/galaxy9292
 Groove Radio,http://213.239.206.179:8090/stream
+Happy Radio FM 104,https://ath10400fm.live24.gr/ath10400fm
+Heat Radio,https://solid67.streamupsolutions.com/proxy/qrynsxmv
 Hot FM ,https://hotfm.live24.gr/hotfm
 Imagine 89.7,https://eu9.fastcast4u.com/proxy/nicperet?mp=/1
 Join Radio,http://stream.radiojar.com:80/2uh8e4akb
@@ -73,10 +76,12 @@ Point Radio Λαικό,http://78.46.149.5:8029/stream
 Radio Galaxy 99,http://solid1.streamupsolutions.com:11074/stream
 Radio Gold @net,http://radiogold.live24.gr:80/radiogold
 Radio Hot Lips Athens,https://netradio.live24.gr/radiohotlips
+RAT FM Μεσογειακού Πανεπιστημίου Κρήτης (Χανιά),http://78.129.185.84:31467/
+Red FM 96.3,https://stream.rcs.revma.com/e4d84zez1duvv
 Real FM 107.1,https://realfmthess.live24.gr/realthess
 Real FM 97.8,https://realfm.live24.gr/realfm
 Republic Radio ,https://netradio.live24.gr/republicthess
-Rock FM 96.9,hls://rockfmlive.mdc.akamaized.net/strmRCFm/userRCFm/playlist.m3u8
+Rock FM 96.9,https://az10.yesstreaming.net/radio/8060/radio.mp3
 Rock Radio 104.7,http://188.165.248.218:8013/stream
 RSO 91.7,http://tachyon.shoutca.st:8594
 Rythmos στούς 94.9,http://rythmos.live24.gr:80/rythmos
@@ -113,12 +118,13 @@ Zoo Radio 90.8,https://netradio.live24.gr/zoo908thess
 Θέμα Radio 104.6,http://stream.radiojar.com:80/cdk030dsvv5tv
 Καλαμαριά FM 101.7,http://sc.greekstream.net:80/;.mp3
 Κανάλι 1 – Δημοτική Ραδιοφωνία Πειραιά 90.4,https://netradio.live24.gr/kanali1peiraia
-Κοινωνικό Ραδιόφωνο Χανίων KPaX Radio,http://78.47.193.254:8006/stream
+Κοινωνικό Ραδιόφωνο Χανίων KPaX Radio,https://c32.radioboss.fm:18563/stream
 Κρήτη FM 87.5,http://s3.onweb.gr:8878
 Λαϊκός FM 87.6,https://netradio.live24.gr/laikos876
-Λάμψη FM 92.3,hls://lampsifmlive.mdc.akamaized.net/strmLampsi/userLampsi/playlist.m3u8
+Λάμψη FM 92.3,https://az11.yesstreaming.net:8140/radio.mp3
 Λυδία η Φιλιππησία 94.2,http://82.192.84.30:1086/stream
 Λύρα FM 91.4,http://172.93.237.106:8271/stream
+Ματζόρε Πανεπιστημίου Κρήτης (Ρέθυμνο) 89.1 FM,https://rs.radio.uoc.gr:8001/matzore_64.ogg
 Μελωδία 99.2,http://netradio
 Μέντα FM 88.0,http://ample-02.radiojar.com:80/menta
 Μεταδεύτερο FM,https://live.metadeftero.gr/stream
