@@ -237,65 +237,6 @@ new_station() {
 		done
 		exit 0
 	fi
-}joker() {
-    local lines=0
-    local stations="$all_stations"
-    local station_number
-    local input_play=""
-
-    while IFS='' read -r line || [[ -n "$line" ]]; do
-        lines=$((lines + 1))
-    done <"$stations"
-
-    validate_station_lists
-
-    while true; do
-        terms=0
-        trap ' [ $terms = 1 ] || { terms=1; kill -TERM -$$; };  exit' EXIT INT HUP TERM QUIT
-
-        station_number=$(( (RANDOM % lines) + 1 )) # Pick random station
-
-        if [ -d "$HOME/.shelldio/" ]; then
-            if [ ! -f "$all_stations" ]; then
-                echo "Δεν ήταν δυνατή η εύρεση του αρχείου σταθμών. Γίνεται η λήψη του..."
-                sleep 2
-                curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
-            fi
-        else
-            echo "Δημιουργείται ο κρυφός φάκελος .shelldio ο οποίος θα περιέχει τα αρχεία των σταθμών."
-            sleep 2
-            mkdir -p "$HOME/.shelldio"
-            echo "Γίνεται η λήψη του αρχείου με όλους τους σταθμούς."
-            sleep 2
-            curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
-        fi
-
-        station=$(sed "${station_number}q;d" "$stations")
-        selected_play=$station_number
-        stathmos_name=$(echo "$station" | cut -d "," -f1)
-        stathmos_url=$(echo "$station" | cut -d "," -f2)
-
-        mpv "$stathmos_url" &>/dev/null &
-        mpv_pid=$!
-
-        while true; do
-            trap '{ clear; echo  "Έξοδος..."; tput cnorm; kill $mpv_pid 2>/dev/null; exit 1; }' SIGINT
-            clear
-            joker_info
-            sleep 0
-            read -r -n1 -t1 input_play
-            if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
-                clear
-                echo "Έξοδος..."
-                tput cnorm
-                kill $mpv_pid 2>/dev/null
-                exit 0
-            elif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
-                kill $mpv_pid 2>/dev/null
-                break # break inner loop to pick a new random station
-            fi
-        done
-    done
 }
 
 joker_info() {
@@ -310,7 +251,7 @@ joker_info() {
 	echo -ne " "
 }
 
-#joker() {
+joker() {
 
 	local lines=0
 	local stations="$all_stations"
@@ -384,7 +325,7 @@ joker_info() {
 			fi
 		done
 	done
-#}
+}
 
 reset_favorites() {
 	if [ ! -f "$my_stations" ]; then
