@@ -37,6 +37,7 @@ Focus FM 103.6,http://focus.greekstream.net:80/
 Fresh Salad 96.1,http://178.33.135.246:5262/stream
 Galaxy 92,https://galaxy.live24.gr/galaxy9292
 Groove Radio,http://213.239.206.179:8090/stream
+Heat Radio,https://solid67.streamupsolutions.com/proxy/qrynsxmv
 Hot FM ,https://hotfm.live24.gr/hotfm
 Imagine 89.7,https://eu9.fastcast4u.com/proxy/nicperet?mp=/1
 Join Radio,http://stream.radiojar.com:80/2uh8e4akb
@@ -74,6 +75,7 @@ Radio Galaxy 99,http://solid1.streamupsolutions.com:11074/stream
 Radio Gold @net,http://radiogold.live24.gr:80/radiogold
 Radio Hot Lips Athens,https://netradio.live24.gr/radiohotlips
 RAT FM Μεσογειακού Πανεπιστημίου Κρήτης (Χανιά),http://78.129.185.84:31467/
+Red FM 96.3,https://stream.rcs.revma.com/e4d84zez1duvv
 Real FM 107.1,https://realfmthess.live24.gr/realthess
 Real FM 97.8,https://realfm.live24.gr/realfm
 Republic Radio ,https://netradio.live24.gr/republicthess
