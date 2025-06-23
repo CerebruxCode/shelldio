@@ -376,13 +376,13 @@ self_update() {
 		printf "${BLUE}%s${RESET}\n" "Γίνεται αναβάθμιση του shelldio"
 		if git pull --rebase --stat origin stable; then
 			printf "${BLUE}%s${RESET}\n" "Ολοκληρώθηκε η αναβάθμιση του shelldio."
-			return
+			exit 0
 		else
 			printf "${RED}%s${RESET}\n" 'Κάποιο πρόβλημα παρουσιάστηκε κατά την αναβάθμιση. Δοκίμασε ξανά αργότερα'
+			exit 1
 		fi
-		exit
 		;;
-	[Nn]*) exit ;;
+	[Nn]*) exit 0 ;;
 	*) echo "Παρακαλώ απαντήστε με y (ναι) ή n (όχι)" ;;
 	esac
 }
