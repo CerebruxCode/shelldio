@@ -152,4 +152,4 @@ Zoo Radio 90.8,https://netradio.live24.gr/zoo908thess
 Στο Μωβ ,http://stream.radiojar.com:80/kk01hepkb.mp3
 Τρανζίστορ 100.3,https://netradio.live24.gr/tranzistor1003thess
 Χριστιανισμός 104.3,http://eu1.fastcast4u.com:9326/stream
-Χρώμα FM 105.8,https://hroma1058thess.live24.gr/hroma1058thess
+Χρώμα FM 105.8 https://hroma1058thess.live24.gr/hroma1058thess
