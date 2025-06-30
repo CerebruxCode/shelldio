@@ -160,7 +160,7 @@ add_stations() {
 		if [[ $input_station = "q" ]] || [[ $input_station = "Q" ]]; then
 			echo "Έξοδος..."
 			exit 0
-		elif [ "$input_station" -gt 0 ] && [ "$input_station" -le $num ]; then #έλεγχος αν το input είναι μέσα στο εύρος της λίστας των σταθμών
+		elif [ "$input_station" -gt 0 ] && [ "$input_station" -le "$num" ]; then #έλεγχος αν το input είναι μέσα στο εύρος της λίστας των σταθμών
 			station=$(sed "${input_station}q;d" "$all_stations")
 			stathmos_name=$(echo "$station" | cut -d "," -f1)
 			stathmos_url=$(echo "$station" | cut -d "," -f2)
@@ -187,7 +187,7 @@ remove_station() {
 			if [[ $remove_station = "q" ]] || [[ $remove_station = "Q" ]]; then
 				echo "Έξοδος..."
 				exit 0
-			elif [ "$remove_station" -gt 0 ] && [ "$remove_station" -le $num ]; then #έλεγχος αν το input είναι μέσα στο εύρος της λίστας των σταθμών
+			elif [ "$remove_station" -gt 0 ] && [ "$remove_station" -le "$num" ]; then #έλεγχος αν το input είναι μέσα στο εύρος της λίστας των σταθμών
 				station=$(sed "${remove_station}q;d" "$my_stations")
 				stathmos_name=$(echo "$station" | cut -d "," -f1)
 				grep -v "$stathmos_name" "$HOME/.shelldio/my_stations.txt" >"$HOME/.shelldio/my_stations.tmp" && mv "$HOME/.shelldio/my_stations.tmp" "$HOME/.shelldio/my_stations.txt"
@@ -436,7 +436,9 @@ while [ "$1" != "" ]; do
 		welcome_screen
 		validate_station_lists
 		add_stations
+		# shellcheck disable=SC2317
 		validate_station_lists
+		# shellcheck disable=SC2317
 		exit 0
 		;;
 	-n | --new-station)
@@ -457,6 +459,7 @@ while [ "$1" != "" ]; do
 		;;
 	--reset)
 		reset_favorites
+		# shellcheck disable=SC2317
 		exit 0
 		;;
 	-f | --fresh)
