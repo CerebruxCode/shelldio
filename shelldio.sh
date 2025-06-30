@@ -25,6 +25,7 @@ else
 fi
 
 ### Variable List
+
 version="v25.06.23"
 
 all_stations="$HOME/.shelldio/all_stations.txt"
@@ -331,6 +332,7 @@ joker() {
 		done
 	done
 }
+
 reset_favorites() {
 	if [ ! -f "$my_stations" ]; then
 		echo "Μη έγκυρη επιλογή. Το αρχείο αγαπημένων δεν υπάρχει."
