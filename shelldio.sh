@@ -15,17 +15,18 @@
 
 ### Colors
 if [ -t 1 ]; then
-	RED=$(printf '\033[31m')
-	BLUE=$(printf '\033[34m')
-	RESET=$(printf '\033[m')
+    RED=$(printf '\033[31m')
+    BLUE=$(printf '\033[34m')
+    RESET=$(printf '\033[m')
 else
-	RED=""
-	BLUE=""
-	RESET=""
+    RED=""
+    BLUE=""
+    RESET=""
 fi
 
 ### Variable List
-version="v4.2.0  " # this space after the version num is intentional to fix UI
+
+version="v25.06.23"
 
 all_stations="$HOME/.shelldio/all_stations.txt"
 my_stations="$HOME/.shelldio/my_stations.txt"
@@ -67,10 +68,10 @@ welcome_screen() {
 	echo '                                           |'
 	echo '._;======================================;_|'
 	echo '| [______________________________________] |'
-	echo '|   |############################|         |'
-	echo '|   |############################| (_) (_) |'
+	echo '|      |############################|      |'
+	echo '| (_)  |############################|  (_) |'
 	echo "|_______________ Shelldio _________________|"
-	echo "|                 $version                 |"
+	echo "|               $version                  |"
 	echo "|                                          |"
 	echo "|       Ακούστε τους αγαπημένους σας       |"
 	echo "|        σταθμούς από το τερματικό         |"
@@ -247,7 +248,7 @@ joker_info() {
 	echo -ne "  Ακούτε: $stathmos_name\n"
 	echo -ne "\n"
 	echo -ne "   ____________               ___________\n"
-	echo -ne "  [Έξοδος (Q/q)].___________.[Νέα τυχαία επιλογή  (R/r)]\n"
+	echo -ne "  [Έξοδος (Q/q)].___________.[Νέα τυχαία επιλογή  (N/n)]\n"
 	echo -ne " "
 }
 
@@ -255,72 +256,79 @@ joker() {
 
 	local lines=0
 	local stations="$all_stations"
+	local station_number
+	local input_play=""
+	
+	# Count total lines in stations file
 	while IFS='' read -r line || [[ -n "$line" ]]; do
 		lines=$((lines + 1))
 	done <"$stations"
-	station_number=$((RANDOM % lines)) #Διάλεξε τυχαίο σταθμό
+	
+	station_number=$(( (RANDOM % lines) + 1 )) #Διάλεξε τυχαίο σταθμό (ξεκινάει από 1)
 	validate_station_lists
 
-	while true; do
-		terms=0
-		trap ' [ $terms = 1 ] || { terms=1; kill -TERM -$$; };  exit' EXIT INT HUP TERM QUIT
+	# Setup signal handling
+	terms=0
+	trap ' [ $terms = 1 ] || { terms=1; kill -TERM -$$; };  exit' EXIT INT HUP TERM QUIT
 
-		if [ -d "$HOME/.shelldio/" ]; then
-			if [ ! -f "$all_stations" ]; then
-				echo "Δεν ήταν δυνατή η εύρεση του αρχείου σταθμών. Γίνεται η λήψη του..."
-				sleep 2
-				curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
-			fi
-		else
-			echo "Δημιουργείται ο κρυφός φάκελος .shelldio ο οποίος θα περιέχει τα αρχεία των σταθμών."
-			sleep 2
-			mkdir -p "$HOME/.shelldio"
-			echo "Γίνεται η λήψη του αρχείου με όλους τους σταθμούς."
+	# Ensure stations file exists
+	if [ -d "$HOME/.shelldio/" ]; then
+		if [ ! -f "$all_stations" ]; then
+			echo "Δεν ήταν δυνατή η εύρεση του αρχείου σταθμών. Γίνεται η λήψη του..."
 			sleep 2
 			curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
 		fi
+	else
+		echo "Δημιουργείται ο κρυφός φάκελος .shelldio ο οποίος θα περιέχει τα αρχεία των σταθμών."
+		sleep 2
+		mkdir -p "$HOME/.shelldio"
+		echo "Γίνεται η λήψη του αρχείου με όλους τους σταθμούς."
+		sleep 2
+		curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
+	fi
 
-		while true; do
-			if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
-				echo "Έξοδος..."
-				tput cnorm # Εμφάνιση cursor
-				exit 0
-			else
-				station=$(sed "${station_number}q;d" "$stations")
-				selected_play=$station_number # για να εμφανίζει το αριθμό που επέλεξε ο χρήστης στον Player UI
-				stathmos_name=$(echo "$station" | cut -d "," -f1)
-				stathmos_url=$(echo "$station" | cut -d "," -f2)
-				break
-			fi
-		done
+	while true; do
+		# Get station info
+		station=$(sed "${station_number}q;d" "$stations")
+		selected_play=$station_number # για να εμφανίζει το αριθμό που επέλεξε ο χρήστης στον Player UI
+		stathmos_name=$(echo "$station" | cut -d "," -f1)
+		stathmos_url=$(echo "$station" | cut -d "," -f2)
 
+		# Start playing the station
 		mpv "$stathmos_url" &>/dev/null &
+		mpv_pid=$!
 
+		# User interaction loop
 		while true; do
 			trap '{ clear; echo  "Έξοδος..."; tput cnorm; exit 1; }' SIGINT
 			clear
 			joker_info
-			sleep 0
-			read -r -n1 -t1 input_play # Για μικρότερη αναμονή της read
+			
+			# Use a different approach for reading input
+			read -r -n1 -s input_play
+			
 			if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
 				clear
 				echo "Έξοδος..."
 				tput cnorm # Εμφάνιση cursor
+				# Kill the current mpv process
+				kill $mpv_pid 2>/dev/null
 				exit 0
-			elif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
-				for pid in $(pgrep '^mpv$'); do
-					url="$(ps -o command= -p "$pid" | awk '{print $2}')"
-					if [[ "$url" == "$stathmos_url" ]]; then
-						echo "Έξοδος..."
-						tput cnorm # Εμφάνιση cursor
-						kill "$pid"
-					else
-						printf "Απέτυχε ο αυτόματος τερματισμός. \nΠάτα τον συνδυασμό Ctrl+C ή κλείσε το τερματικό \nή τερμάτισε το Shelldio απο τις διεργασίες του συστήματος"
-					fi
-				done
-				station_number=$((RANDOM % lines))
-				break
+			elif [[ $input_play = "n" ]] || [[ $input_play = "N" ]]; then
+				# Kill current mpv process
+				kill $mpv_pid 2>/dev/null
+				wait $mpv_pid 2>/dev/null
+				
+				# Select new random station
+				station_number=$(( (RANDOM % lines) + 1 ))
+				clear
+				echo "Επιλογή νέου τυχαίου σταθμού..."
+				sleep 1
+				break # Break out of inner loop to start new station
 			fi
+			
+			# Small delay to prevent excessive CPU usage
+			sleep 0.1
 		done
 	done
 }
@@ -332,7 +340,7 @@ reset_favorites() {
 	fi
 
 	while true; do
-		read -rp "Θες σίγουρα να διαγράψεις το αρχείο αγαπημένων; (y/n)" yn
+		read -rp "Θελεις σίγουρα να διαγράψεις το αρχείο αγαπημένων; (y/n)" yn
 		case $yn in
 		[Yy]*)
 			rm -f "$my_stations"
@@ -370,21 +378,22 @@ self_update() {
 		return
 	fi
 
-	read -rp "Θέλεις να γίνει αναβάθμιση του shelldio; (y/n) : " update_confirm
-	case $update_confirm in
-	[Yy]*)
-		printf "${BLUE}%s${RESET}\n" "Γίνεται αναβάθμιση του shelldio"
-		if git pull --rebase --stat origin stable; then
-			printf "${BLUE}%s${RESET}\n" "Ολοκληρώθηκε η αναβάθμιση του shelldio."
-			return
-		else
-			printf "${RED}%s${RESET}\n" 'Κάποιο πρόβλημα παρουσιάστηκε κατά την αναβάθμιση. Δοκίμασε ξανά αργότερα'
-		fi
-		exit
-		;;
-	[Nn]*) exit ;;
-	*) echo "Παρακαλώ απαντήστε με y (ναι) ή n (όχι)" ;;
-	esac
+	while true; do
+		read -rp "Θέλεις να γίνει αναβάθμιση του shelldio; (y/n) : " update_confirm
+		case $update_confirm in
+		[Yy]*)
+			printf "${BLUE}%s${RESET}\n" "Γίνεται αναβάθμιση του shelldio"
+			if git pull --rebase --stat origin stable; then
+				printf "${BLUE}%s${RESET}\n" "Ολοκληρώθηκε η αναβάθμιση του shelldio."
+			else
+				printf "${RED}%s${RESET}\n" 'Κάποιο πρόβλημα παρουσιάστηκε κατά την αναβάθμιση. Δοκίμασε ξανά αργότερα'
+			fi
+			exit 0
+			;;
+		[Nn]*) exit 0 ;;
+		*) echo "Παρακαλώ απαντήστε με y (ναι) ή n (όχι)" ;;
+		esac
+	done
 }
 
 ### Λίστα με τις επιλογές σαν 1ο όρισμα shelldio

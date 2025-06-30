@@ -1,12 +1,23 @@
+name: CSV Lint
+
 on: [push]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: csv lint
     steps:
-    - uses: actions/checkout@v1
-    - name: Run csv-lint
-      uses: blackstar257/docker-csvlint@master
-      env:
-        ACTION_STATE_NAME: ".shelldio/all_stations.txt"
+      - uses: actions/checkout@v4
+      - name: Validate CSV structure
+        run: |
+          python3 <<EOF
+          import sys, re
+          with open('.shelldio/all_stations.txt') as f:
+              for i, line in enumerate(f, 1):
+                  parts = [p.strip() for p in line.strip().split(',', 1)]
+                  if len(parts) != 2 or not parts[0] or not parts[1]:
+                      print(f"Line {i} is invalid: {line.strip()}")
+                      sys.exit(1)
+                  if not re.match(r'https?://', parts[1]):
+                      print(f"Line {i} has invalid URL: {parts[1]}")
+                      sys.exit(1)
+          EOF
