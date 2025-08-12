@@ -44,10 +44,10 @@ North 98,https://netradio.live24.gr/north98thess
 Nostos 100.6,https://neos.win:37878/stream
 Plus Radio 102.6,http://plusradio.gr/stream1
 Point Radio Pop,http://radio.streamings.gr:8029/stream2
-Point Radio Λαικό,http://radio.streamings.gr:8029/stream
 Radio Galaxy 99,http://solid1.streamupsolutions.com:11074/stream
 Radio Gold @net,http://radiogold.live24.gr:80/radiogold
 Radio Hot Lips Athens,https://netradio.live24.gr/radiohotlips
+Radio Roben,http://radio.streamings.gr:8029/stream
 Red FM 96.3,https://stream.rcs.revma.com/e4d84zez1duvv
 Real FM 97.8,https://realfm.live24.gr/realfm
 Republic Radio,https://netradio.live24.gr/republicthess
