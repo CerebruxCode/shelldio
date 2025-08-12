@@ -26,7 +26,7 @@ fi
 
 ### Variable List
 
-version="v25.06.23"
+version="v25.08.12"
 
 all_stations="$HOME/.shelldio/all_stations.txt"
 my_stations="$HOME/.shelldio/my_stations.txt"
@@ -53,6 +53,21 @@ validate_station_lists() {
 			echo "Στη συνέχεια πρόσθεσε ξανά τους αγαπημένους σου σταθμούς"
 			exit 1
 		fi
+	fi
+}
+
+start_mpv() {
+  mpv --no-video --input-ipc-server=/tmp/mpv_socket "$stathmos_url" &>/dev/null &
+  mpv_pid=$!
+}
+
+get_current_title() {
+	if [ -S /tmp/mpv_socket ]; then
+		local title
+		title=$(printf '{ "command": ["get_property", "media-title"] }\n' | socat - /tmp/mpv_socket 2>/dev/null | jq -r '.data' 2>/dev/null)
+		echo "$title"
+	else
+		echo ""
 	fi
 }
 
@@ -96,27 +111,27 @@ option_detail() {
 			από τη θέση που δόθηκε ως όρισμα χωρίς να εμφανίζει την λίστα αγαπημένων μας.
 			(π.χ. shelldio 4, ξεκινάει τον σταθμό που βρίσκεται στην θέση 4 από την λίστα των αγαπημένων μας)
 
-	-a, --add: 	Εμφανίζει την γενική λίστα με όλους τους διαθέσιμους ραδιοφωνικούς σταθμούς 
+	-a, --add: 	Εμφανίζει την γενική λίστα με όλους τους διαθέσιμους ραδιοφωνικούς σταθμούς
 			και σας δίνει την δυνατότητα να προσθέσετε, όποια επιθυμείτε, στην λίστα με τoυς αγαπημένους σας
 			σταθμούς (στο αρχείο $my_stations)
 
-	-n, --new:	Σας δίνει την δυνατότητα να προσθέσετε έναν νέο σταθμό στην λίστα με τους αγαπημένους σας 
+	-n, --new:	Σας δίνει την δυνατότητα να προσθέσετε έναν νέο σταθμό στην λίστα με τους αγαπημένους σας
 			ραδιοφωνικούς σταθμούς (στο αρχείο $my_stations)
-	
+
 	-f, --fresh: 	Κατεβάζει εκ νέου την γενική λίστα των ραδιοφωνικών σταθμών με επικαιροποιημένους
 			ραδιοφωνικούς σταθμούς, διορθωμένα links αλλά και νέους ραδιοφωνικούς σταθμούς
-	
+
 	-h, --help: 	Εμφανίζει αυτές τις πληροφορίες για την χρήση της εφαρμογής
-	
+
 	-j, --joker: 	Ξεκινάει την αναπαραγωγή τυχαίου σταθμού
-	
+
 	-l, --list: 	Εμφανίζει την γενική λίστα με τους ραδιοφωνικούς σταθμούς. Μπορείτε να χρησιμοποιήσετε
 			την επιλογή αυτή σε συνδυασμό με άλλη εντολή. πχ. για να κάνετε αναζήτηση :
-			
+
 					shelldio -l | grep -i "onoma stathmou"
-	
+
 	-r, --remove: 	Εμφανίζει την λίστα με τους σταθμούς που έχετε προσθέσει στα αγαπημένα σας και σας
-			δίνει την δυνατότητα να αφαιρέσετε όποια θέλετε 
+			δίνει την δυνατότητα να αφαιρέσετε όποια θέλετε
 			(από το $my_stations)
 
 	-u, --update: 	Σας δίνει την δυνατότητα να κάνετε αναβάθμιση του Shelldio στην νεότερη διαθέσιμη έκδοση.
@@ -124,7 +139,7 @@ option_detail() {
 			με git clone και όχι απο πακέτο εγκατάστασης (π.χ. στο Arch Linux)
 
 	--reset: 	Προσοχή - Καθαρίζει τη λίστα με τους σταθμούς που έχετε προσθέσει στα αγαπημένα σας
-			διαγράφοντας το αρχείο $my_stations. Είναι χρήσιμο αν 
+			διαγράφοντας το αρχείο $my_stations. Είναι χρήσιμο αν
 			θέλετε να ξεκινήσετε απο την αρχή την δημιουργία της λίστας των αγαπημένων σας.
 EOF
 }
@@ -140,12 +155,16 @@ list_stations() {
 # Πληροφορίες που εμφανίζονται μετά την επιλογή του σταθμού
 info() {
 	welcome_screen
-
+	current_title=$(get_current_title)
 	tput civis # Εξαφάνιση cursor
 	echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $(date +"%T")\n"
 	echo -ne " \n"
 	echo -ne "  Ακούτε: $stathmos_name\n"
 	echo -ne "\n"
+    if [[ -n "$current_title" && "$current_title" != "radio" ]]; then
+        echo -ne "  Τίτλος: $current_title\n"
+        echo -ne "\n"
+    fi
 	echo -ne "   ____________               ___________\n"
 	echo -ne "  [Έξοδος (Q/q)].___________.[Πίσω  (R/r)]\n"
 	echo -ne " "
@@ -199,25 +218,34 @@ remove_station() {
 	fi
 }
 
-mpv_msg() {
-	if grep debian /etc/os-release &>/dev/null; then
-		echo "Τρέξτε 'sudo apt install mpv' για να εγκαταστήσετε τον player"
-	elif grep fedora /etc/os-release &>/dev/null; then
-		echo "Τρέξτε 'sudo dnf -y install mpv' για να εγκαταστήσετε τον player"
-	elif grep suse /etc/os-release &>/dev/null; then
-		echo "Τρέξτε 'sudo zypper in mpv' για να εγκαταστήσετε τον player"
-	elif grep centos /etc/os-release &>/dev/null; then
-		echo "Τρέξτε 'sudo yum -y install mpv' για να εγκαταστήσετε τον player"
-	elif uname -a | grep Darwin &>/dev/null; then
-		echo "Τρέξτε 'sudo brew install mpv' για να εγκαταστήσετε τον player"
-	elif uname -a | grep BSD &>/dev/null; then
-		echo "Τρέξτε 'sudo pkg install mpv' για να εγκαταστήσετε τον player"
+install_msg() {
+	local pkg="$1"
+
+	if command -v apt &>/dev/null; then
+		echo "Τρέξτε 'sudo apt install $pkg' για να το εγκαταστήσετε"
+	elif command -v dnf &>/dev/null; then
+		echo "Τρέξτε 'sudo dnf -y install $pkg' για να το εγκαταστήσετε"
+	elif command -v zypper &>/dev/null; then
+		echo "Τρέξτε 'sudo zypper in $pkg' για να το εγκαταστήσετε"
+	elif command -v yum &>/dev/null; then
+		echo "Τρέξτε 'sudo yum -y install $pkg' για να το εγκαταστήσετε"
+	elif command -v pacman &>/dev/null; then
+		echo "Τρέξτε 'sudo pacman -S $pkg' για να το εγκαταστήσετε"
+	elif command -v brew &>/dev/null; then
+		echo "Τρέξτε 'brew install $pkg' για να το εγκαταστήσετε"
+	elif command -v pkg &>/dev/null; then
+		echo "Τρέξτε 'sudo pkg install $pkg' για να το εγκαταστήσετε"
 	else
-		echo "Δεν μπορέσαμε να εντοπίσουμε το λειτουργικό σας σύστημα."
-		echo "Παρακαλούμε επισκεφτείτε τον παρακάτω σύνδεσμο για οδηγίες εγκατάστασης του MPV"
-		echo "https://mpv.io/installation/"
+		echo "Δεν μπορέσαμε να βρούμε ποιος package manager υπάρχει στο σύστημα."
+		echo "Επισκεφτείτε τη σελίδα του πακέτου $pkg για οδηγίες."
+		return 1
 	fi
 }
+
+mpv_msg() { install_msg "mpv"; }
+jq_msg() { install_msg "jq"; }
+socat_msg() { install_msg "socat"; }
+
 new_station() {
 	if [ ! -f "$HOME/.shelldio/my_stations.txt" ]; then
 		echo "Δεν έχει δημιουργηθεί το αρχείο my_stations."
@@ -242,11 +270,16 @@ new_station() {
 
 joker_info() {
 	welcome_screen
+	current_title=$(get_current_title)
 	tput civis # Απόκρυψη cursor
 	echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $(date +"%T")\n"
 	echo -ne " \n"
 	echo -ne "  Ακούτε: $stathmos_name\n"
 	echo -ne "\n"
+    if [[ -n "$current_title" && "$current_title" != "radio" ]]; then
+        echo -ne "  Τίτλος: $current_title\n"
+        echo -ne "\n"
+    fi
 	echo -ne "   ____________               ___________\n"
 	echo -ne "  [Έξοδος (Q/q)].___________.[Νέα τυχαία επιλογή  (N/n)]\n"
 	echo -ne " "
@@ -258,13 +291,13 @@ joker() {
 	local stations="$all_stations"
 	local station_number
 	local input_play=""
-	
+
 	# Count total lines in stations file
 	while IFS='' read -r line || [[ -n "$line" ]]; do
 		lines=$((lines + 1))
 	done <"$stations"
-	
-	station_number=$(( (RANDOM % lines) + 1 )) #Διάλεξε τυχαίο σταθμό (ξεκινάει από 1)
+
+	station_number=$(( (RANDOM % lines) + 1 ))
 	validate_station_lists
 
 	# Setup signal handling
@@ -290,45 +323,55 @@ joker() {
 	while true; do
 		# Get station info
 		station=$(sed "${station_number}q;d" "$stations")
-		selected_play=$station_number # για να εμφανίζει το αριθμό που επέλεξε ο χρήστης στον Player UI
+		selected_play=$station_number
 		stathmos_name=$(echo "$station" | cut -d "," -f1)
 		stathmos_url=$(echo "$station" | cut -d "," -f2)
 
-		# Start playing the station
-		mpv "$stathmos_url" &>/dev/null &
-		mpv_pid=$!
+		start_mpv
 
 		# User interaction loop
 		while true; do
-			trap '{ clear; echo  "Έξοδος..."; tput cnorm; exit 1; }' SIGINT
-			clear
-			joker_info
-			
-			# Use a different approach for reading input
-			read -r -n1 -s input_play
-			
-			if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
-				clear
-				echo "Έξοδος..."
-				tput cnorm # Εμφάνιση cursor
-				# Kill the current mpv process
-				kill $mpv_pid 2>/dev/null
-				exit 0
-			elif [[ $input_play = "n" ]] || [[ $input_play = "N" ]]; then
-				# Kill current mpv process
-				kill $mpv_pid 2>/dev/null
-				wait $mpv_pid 2>/dev/null
-				
-				# Select new random station
-				station_number=$(( (RANDOM % lines) + 1 ))
-				clear
-				echo "Επιλογή νέου τυχαίου σταθμού..."
-				sleep 1
-				break # Break out of inner loop to start new station
-			fi
-			
-			# Small delay to prevent excessive CPU usage
-			sleep 0.1
+		trap '{ tput cnorm; echo; echo "Έξοδος..."; kill $mpv_pid 2>/dev/null; exit 1; }' SIGINT
+
+		clear
+		joker_info
+
+		last_title=""
+		last_time=""
+
+			while true; do
+				current_title=$(get_current_title)
+				current_time=$(date +"%T")
+
+				if [[ "$current_title" != "$last_title" ]]; then
+					tput cup 3 0
+					printf "%-80s" "Τίτλος: $current_title"
+					last_title="$current_title"
+				fi
+
+				if [[ "$current_time" != "$last_time" ]]; then
+					tput cup 1 0
+					printf "%-20s" "Ώρα: $current_time"
+					last_time="$current_time"
+				fi
+
+
+				read -r -n1 -s -t 0.1 input_play
+				if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
+					tput cnorm
+					echo
+					echo "Έξοδος..."
+					kill $mpv_pid 2>/dev/null
+					exit 0
+				elif [[ $input_play = "n" ]] || [[ $input_play = "N" ]]; then
+					kill $mpv_pid 2>/dev/null
+					wait $mpv_pid 2>/dev/null
+					station_number=$(( (RANDOM % lines) + 1 ))
+					echo "Επιλογή νέου τυχαίου σταθμού..."
+					sleep 1
+					break
+				fi
+			done
 		done
 	done
 }
@@ -485,21 +528,54 @@ done
 
 ### Base script
 # Έλεγχος προαπαιτούμενων binaries
-player=$(command -v mpv 2>/dev/null || echo "1")
+missing_binaries=()
+unknown_os_binaries=()
+unknown_os_detected=0
 
-if [[ $player = 1 ]]; then
-	echo "Έλεγχος προαπαιτούμενων για το Shelldio"
-	sleep 1
-	echo -e "Το Shelldio χρειάζεται το MPV player αλλά δεν βρέθηκε στο σύστημά σας.\nΠαρακαλούμε εγκαταστήστε το MPV πριν τρέξετε το Shelldio"
-	mpv_msg
-	exit 1
-fi
-for binary in grep curl info sleep clear killall; do
-	if ! command -v $binary &>/dev/null; then
-		echo -e "Το Shelldio χρειάζεται το '$binary'\nΠαρακαλούμε εγκαταστήστε το πριν τρέξετε το Shelldio"
-		exit 1
+for binary in mpv jq socat; do
+	if ! command -v "$binary" &>/dev/null; then
+		missing_binaries+=("$binary")
 	fi
 done
+
+if (( ${#missing_binaries[@]} > 0 )); then
+	echo "Έλεγχος προαπαιτούμενων για το Shelldio"
+	echo "Λείπουν τα παρακάτω προαπαιτούμενα:"
+	for bin in "${missing_binaries[@]}"; do
+		echo " - $bin"
+	done
+	echo
+
+	for bin in "${missing_binaries[@]}"; do
+		case "$bin" in
+			mpv)
+				if ! mpv_msg; then
+					unknown_os_binaries+=("mpv")
+					unknown_os_detected=1
+				fi
+				;;
+			jq)
+				if ! jq_msg; then
+					unknown_os_binaries+=("jq")
+					unknown_os_detected=1
+				fi
+				;;
+			socat)
+				if ! socat_msg; then
+					unknown_os_binaries+=("socat")
+					unknown_os_detected=1
+				fi
+				;;
+		esac
+	done
+
+	if (( unknown_os_detected == 1 )); then
+		echo "Δεν μπορέσαμε να εντοπίσουμε το λειτουργικό σας σύστημα."
+	fi
+
+	echo "Παρακαλούμε εγκαταστήστε τα παραπάνω πριν τρέξετε ξανά το Shelldio."
+	exit 1
+fi
 
 # Έλεγχος εγκυρότητας λίστας σταθμών
 validate_station_lists
@@ -574,7 +650,7 @@ while true; do
 		fi
 	done
 
-	mpv "$stathmos_url" &>/dev/null &
+	start_mpv
 
 	while true; do
 		trap '{ clear; echo  "Έξοδος..."; tput cnorm; exit 1; }' SIGINT
