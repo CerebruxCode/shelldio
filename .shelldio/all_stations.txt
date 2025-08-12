@@ -43,8 +43,8 @@ Mythos Athens,http://bestgreek.info:8104
 North 98,https://netradio.live24.gr/north98thess
 Nostos 100.6,https://neos.win:37878/stream
 Plus Radio 102.6,http://plusradio.gr/stream1
-Point Radio Pop,http://78.46.149.5:8029/stream2
-Point Radio Λαικό,http://78.46.149.5:8029/stream
+Point Radio Pop,http://radio.streamings.gr:8029/stream2
+Point Radio Λαικό,http://radio.streamings.gr:8029/stream
 Radio Galaxy 99,http://solid1.streamupsolutions.com:11074/stream
 Radio Gold @net,http://radiogold.live24.gr:80/radiogold
 Radio Hot Lips Athens,https://netradio.live24.gr/radiohotlips
