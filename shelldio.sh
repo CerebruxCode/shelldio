@@ -56,9 +56,17 @@ validate_station_lists() {
 	fi
 }
 
+#start_mpv() {
+#  mpv --no-video --input-ipc-server=/tmp/mpv_socket "$stathmos_url" &>/dev/null &
+#  mpv_pid=$!
+#}
 start_mpv() {
-  mpv --no-video --input-ipc-server=/tmp/mpv_socket "$stathmos_url" &>/dev/null &
-  mpv_pid=$!
+	if [[ -n "$mpv_pid" ]]; then
+		kill $mpv_pid 2>/dev/null
+		wait $mpv_pid 2>/dev/null
+	fi
+	mpv --no-video --input-ipc-server=/tmp/mpv_socket "$stathmos_url" &>/dev/null &
+	mpv_pid=$!
 }
 
 get_current_title() {
