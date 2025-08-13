@@ -92,6 +92,13 @@ start_mpv() {
   mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
   mpv_pid=$!
 
+  # Wait for the IPC socket to be ready (max 2 seconds)
+  for i in {1..40}; do
+    if [ -S /tmp/mpv_socket ]; then
+      break
+    fi
+    sleep 0.05
+  done
   fade_in
 }
 
