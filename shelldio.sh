@@ -69,7 +69,7 @@ validate_station_lists() {
 # 	mpv_pid=$!
 # }
 fade_out() {
-  for vol in {100..50..-5}; do
+  for vol in {100..0..-5}; do
     echo '{ "command": ["set_property", "volume", '"$vol"'] }' | socat - /tmp/mpv_socket &>/dev/null
     sleep 0.03
   done
