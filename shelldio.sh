@@ -93,7 +93,7 @@ start_mpv() {
   mpv_pid=$!
 
   # Wait for the IPC socket to be ready (max 2 seconds)
-  for i in {1..40}; do
+for _ in {1..40}; do
     if [ -S /tmp/mpv_socket ]; then
       break
     fi
