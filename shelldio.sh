@@ -26,7 +26,7 @@ fi
 
 ### Variable List
 
-version="v25.08.12"
+version="v25.08.13"
 
 all_stations="$HOME/.shelldio/all_stations.txt"
 my_stations="$HOME/.shelldio/my_stations.txt"
@@ -60,13 +60,46 @@ validate_station_lists() {
 #  mpv --no-video --input-ipc-server=/tmp/mpv_socket "$stathmos_url" &>/dev/null &
 #  mpv_pid=$!
 #}
+# start_mpv() {
+# 	if [[ -n "$mpv_pid" ]]; then
+# 		kill $mpv_pid 2>/dev/null
+# 		wait $mpv_pid 2>/dev/null
+# 	fi
+# 	mpv --no-video --input-ipc-server=/tmp/mpv_socket "$stathmos_url" &>/dev/null &
+# 	mpv_pid=$!
+# }
+fade_out() {
+  for vol in {100..0..-5}; do
+    echo '{ "command": ["set_property", "volume", '"$vol"'] }' | socat - /tmp/mpv_socket &>/dev/null
+    sleep 0.03
+  done
+}
+
+fade_in() {
+  for vol in {0..100..5}; do
+    echo '{ "command": ["set_property", "volume", '"$vol"'] }' | socat - /tmp/mpv_socket &>/dev/null
+    sleep 0.03
+  done
+}
+
 start_mpv() {
-	if [[ -n "$mpv_pid" ]]; then
-		kill $mpv_pid 2>/dev/null
-		wait $mpv_pid 2>/dev/null
-	fi
-	mpv --no-video --input-ipc-server=/tmp/mpv_socket "$stathmos_url" &>/dev/null &
-	mpv_pid=$!
+  if [[ -n "$mpv_pid" ]] && kill -0 "$mpv_pid" 2>/dev/null; then
+    fade_out
+    kill "$mpv_pid" 2>/dev/null
+    rm -f /tmp/mpv_socket
+  fi
+
+  mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
+  mpv_pid=$!
+
+  # Wait for the IPC socket to be ready (max 2 seconds)
+for _ in {1..40}; do
+    if [ -S /tmp/mpv_socket ]; then
+      break
+    fi
+    sleep 0.05
+  done
+  fade_in
 }
 
 get_current_title() {
