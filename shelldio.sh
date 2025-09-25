@@ -26,7 +26,7 @@ fi
 
 ### Variable List
 
-version="v25.08.13"
+version="v25.09.25"
 
 all_stations="$HOME/.shelldio/all_stations.txt"
 my_stations="$HOME/.shelldio/my_stations.txt"
@@ -195,20 +195,51 @@ list_stations() {
 
 # Πληροφορίες που εμφανίζονται μετά την επιλογή του σταθμού
 info() {
-	welcome_screen
-	current_title=$(get_current_title)
-	tput civis # Εξαφάνιση cursor
-	echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $(date +"%T")\n"
-	echo -ne " \n"
-	echo -ne "  Ακούτε: $stathmos_name\n"
-	echo -ne "\n"
-    if [[ -n "$current_title" && "$current_title" != "radio" ]]; then
-        echo -ne "  Τίτλος: $current_title\n"
-        echo -ne "\n"
-    fi
-	echo -ne "   ____________               ___________\n"
-	echo -ne "  [Έξοδος (Q/q)].___________.[Πίσω  (R/r)]\n"
-	echo -ne " "
+    welcome_screen
+    tput civis # Εξαφάνιση cursor
+    
+    last_title=""
+    last_time=""
+    
+    while kill -0 "$mpv_pid" 2>/dev/null; do
+        current_title=$(get_current_title)
+        current_time=$(date +"%T")
+        
+        # Update title only when it changes
+        if [[ "$current_title" != "$last_title" ]]; then
+            tput cup 6 0  # Move to title line
+            tput el       # Clear line
+            if [[ -n "$current_title" && "$current_title" != "null" && "$current_title" != "radio" ]]; then
+                echo -ne "  Τίτλος: $current_title"
+            else
+                echo -ne "  Τίτλος: Φόρτωση..."
+            fi
+            last_title="$current_title"
+        fi
+        
+        # Update time display
+        if [[ "$current_time" != "$last_time" ]]; then
+            tput cup 1 0  # Move to time line
+            tput el       # Clear line
+            echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $current_time"
+            last_time="$current_time"
+        fi
+        
+        # Move cursor back to menu
+        tput cup 8 0
+        echo -ne "   ____________               ___________"
+        tput cup 9 0
+        echo -ne "  [Έξοδος (Q/q)].___________.[Πίσω  (R/r)]"
+        tput cup 10 0
+        echo -ne " "
+        
+        # Check for user input
+        read -r -n1 -s -t 0.1 input_play
+        case "$input_play" in
+            [Qq]) return 1 ;;  # Signal to quit
+            [Rr]) return 0 ;;  # Signal to return to menu
+        esac
+    done
 }
 
 add_stations() {
