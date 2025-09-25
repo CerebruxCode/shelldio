@@ -140,9 +140,16 @@ get_current_title() {
             title=$(printf '{ "command": ["get_property", "media-title"] }\n' | socat - /tmp/mpv_socket 2>/dev/null | jq -r '.data' 2>/dev/null)
         fi
         
-        # Clean up the title
+        # Clean up the title and filter out obvious filenames/URLs
         if [[ -n "$title" && "$title" != "null" && "$title" != "radio" ]]; then
-            echo "$title"
+            # Check if it looks like a filename (has extension) or stream URL
+            if [[ "$title" =~ \.(mp3|aac|m4a|ogg|flac|opus|m3u8|pls)$ ]] || \
+               [[ "$title" =~ ^(https?://|stream|live|radio)[0-9]*\.? ]] || \
+               [[ "$title" =~ ^(stream|live|radio)[0-9]*$ ]]; then
+                echo ""  # Return empty for obvious filenames/streams
+            else
+                echo "$title"
+            fi
         else
             echo ""
         fi
@@ -257,7 +264,7 @@ info() {
             if [[ -n "$current_title" && "$current_title" != "null" && "$current_title" != "radio" ]]; then
                 echo -ne "  Τίτλος: $current_title"
             else
-                echo -ne "  Τίτλος: Φόρτωση..."
+                echo -ne "  Τίτλος: Προσπάθεια φόρτωσης..."
             fi
             last_title="$current_title"
         fi
