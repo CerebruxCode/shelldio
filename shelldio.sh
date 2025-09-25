@@ -736,35 +736,32 @@ while true; do
 	start_mpv
 
 	while true; do
-		trap '{ clear; echo  "Έξοδος..."; tput cnorm; exit 1; }' SIGINT
+		trap '{ clear; echo  "Έξοδος..."; tput cnorm; kill $mpv_pid 2>/dev/null; exit 1; }' SIGINT
 		clear
-		info
-		sleep 0
-		read -r -n1 -t1 input_play # Για μικρότερη αναμονή της read
-		if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
-			clear
-			echo "Έξοδος..."
-			tput cnorm # Εμφάνιση cursor
-			exit 0
-		elif [[ $input_play = "r" ]] || [[ $input_play = "R" ]]; then
-			for pid in $(pgrep '^mpv$'); do
-				url="$(ps -o command= -p "$pid" | awk '{print $2}')"
-				if [[ "$url" == "$stathmos_url" ]]; then
-					echo "Έξοδος..."
-					tput cnorm # Εμφάνιση cursor
-					kill "$pid"
-				else
-					printf "Απέτυχε ο αυτόματος τερματισμός. \nΠάτα τον συνδυασμό Ctrl+C ή κλείσε το τερματικό \nή τερμάτισε το Shelldio απο τις διεργασίες του συστήματος"
-				fi
-			done
+		
+		if info; then
+			# info() returned 0, go back to menu
+			if [[ -n "$mpv_pid" ]]; then
+				fade_out
+				kill "$mpv_pid" 2>/dev/null
+				wait "$mpv_pid" 2>/dev/null
+			fi
 			clear
 			echo "Επιστροφή στη λίστα σταθμών"
 			tput cnorm # Εμφάνιση cursor
 			sleep 1
 			clear
 			break
+		else
+			# info() returned 1, quit application
+			clear
+			echo "Έξοδος..."
+			tput cnorm # Εμφάνιση cursor
+			if [[ -n "$mpv_pid" ]]; then
+				kill "$mpv_pid" 2>/dev/null
+			fi
+			exit 0
 		fi
-
 	done
 
 done
