@@ -298,10 +298,19 @@ info() {
     
     last_title=""
     last_time=""
+    last_station_name=""
     
     while kill -0 "$mpv_pid" 2>/dev/null; do
         current_title=$(get_current_title)
         current_time=$(date +"%T")
+        
+        # Update station name if it changed (during navigation)
+        if [[ "$stathmos_name" != "$last_station_name" ]]; then
+            tput cup 20 0  # Move to station name line
+            tput el        # Clear line
+            echo -ne "  Ακούτε: $stathmos_name"
+            last_station_name="$stathmos_name"
+        fi
         
         # Update title only when it changes  
         if [[ "$current_title" != "$last_title" ]]; then
