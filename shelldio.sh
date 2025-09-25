@@ -530,12 +530,50 @@ joker() {
         # Setup interrupt handler for this station
         trap '{ tput cnorm; echo; echo "Έξοδος..."; kill $mpv_pid 2>/dev/null; exit 1; }' SIGINT
 
-        # Play this station
+        # Play this station  
+        clear
+        welcome_screen
+        tput civis # Απόκρυψη cursor
+        echo ""
+        echo -ne "  Ακούτε: $stathmos_name\n"
+        echo ""
+        
+        last_title_joker=""
+        last_time_joker=""
+        
         while kill -0 "$mpv_pid" 2>/dev/null; do
-            clear
-            joker_info
+            current_title=$(get_current_title)
+            current_time=$(date +"%T")
             
-            read -r -n1 -s -t 1 input_play
+            # Update title only when it changes
+            if [[ "$current_title" != "$last_title_joker" ]]; then
+                tput cup 21 0  # Move to title line
+                tput el        # Clear line
+                if [[ -n "$current_title" && "$current_title" != "radio" ]]; then
+                    echo -ne "  Τίτλος: $current_title"
+                else
+                    echo -ne "  Τίτλος: Προσπάθεια φόρτωσης..."
+                fi
+                last_title_joker="$current_title"
+            fi
+            
+            # Update time display
+            if [[ "$current_time" != "$last_time_joker" ]]; then
+                tput cup 23 0  # Move to time line
+                tput el        # Clear line
+                echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $current_time"
+                last_time_joker="$current_time"
+            fi
+            
+            # Update menu
+            tput cup 24 0
+            echo -ne "   _______________________________________________________"
+            tput cup 25 0
+            echo -ne "  [Έξοδος (Q)] [Τυχαία (N)] [Προηγ. (P)] [Επόμ. (→)]"
+            tput cup 26 0
+            echo -ne " "
+            
+            read -r -n1 -s -t 0.1 input_play
             case "$input_play" in
                 [Qq])
                     tput cnorm
