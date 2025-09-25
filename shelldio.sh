@@ -238,6 +238,11 @@ info() {
     welcome_screen
     tput civis # Εξαφάνιση cursor
     
+    # Display initial station info
+    echo ""
+    echo -ne "  Ακούτε: $stathmos_name\n"
+    echo ""
+    
     last_title=""
     last_time=""
     
@@ -245,10 +250,10 @@ info() {
         current_title=$(get_current_title)
         current_time=$(date +"%T")
         
-        # Update title only when it changes
+        # Update title only when it changes  
         if [[ "$current_title" != "$last_title" ]]; then
-            tput cup 6 0  # Move to title line
-            tput el       # Clear line
+            tput cup 21 0  # Move to title line (after welcome screen)
+            tput el        # Clear line
             if [[ -n "$current_title" && "$current_title" != "null" && "$current_title" != "radio" ]]; then
                 echo -ne "  Τίτλος: $current_title"
             else
@@ -257,20 +262,20 @@ info() {
             last_title="$current_title"
         fi
         
-        # Update time display
+        # Update time display at the bottom
         if [[ "$current_time" != "$last_time" ]]; then
-            tput cup 1 0  # Move to time line
-            tput el       # Clear line
+            tput cup 23 0  # Move to time line (bottom area)
+            tput el        # Clear line
             echo -ne "  Σταθμός: [$selected_play]    Η ώρα είναι $current_time"
             last_time="$current_time"
         fi
         
-        # Move cursor back to menu
-        tput cup 8 0
+        # Move cursor to menu at the bottom
+        tput cup 24 0
         echo -ne "   ____________               ___________"
-        tput cup 9 0
+        tput cup 25 0
         echo -ne "  [Έξοδος (Q/q)].___________.[Πίσω  (R/r)]"
-        tput cup 10 0
+        tput cup 26 0
         echo -ne " "
         
         # Check for user input
