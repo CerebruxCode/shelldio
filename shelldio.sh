@@ -527,6 +527,7 @@ git_updater() {
 		cd "$RETURN_TO_PWD" || exit 0
 	else
 		echo "To Shelldio δεν έχει εγκατασταθεί μέσω git clone οπότε δεν είναι διαθέσιμη η ενημέρωση μέσω shelldio -u"
+		exit 1
 	fi
 }
 
