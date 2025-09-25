@@ -88,47 +88,23 @@ fade_in() {
 }
 
 start_mpv() {
-    if [[ -n "$mpv_pid" ]] && kill -0 "$mpv_pid" 2>/dev/null; then
-        fade_out
-        kill "$mpv_pid" 2>/dev/null
-        # Wait up to 3 seconds for process to terminate
-        for i in {1..30}; do
-            if ! kill -0 "$mpv_pid" 2>/dev/null; then
-                break
-            fi
-            sleep 0.1
-        done
-        # Force kill if still running
-        if kill -0 "$mpv_pid" 2>/dev/null; then
-            kill -9 "$mpv_pid" 2>/dev/null
-        fi
-        rm -f /tmp/mpv_socket
-    fi
+  if [[ -n "$mpv_pid" ]] && kill -0 "$mpv_pid" 2>/dev/null; then
+    fade_out
+    kill "$mpv_pid" 2>/dev/null
+    rm -f /tmp/mpv_socket
+  fi
 
-    mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
-    mpv_pid=$!
+  mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
+  mpv_pid=$!
 
-        # Wait for the IPC socket to be ready with loading indicator
-    for i in {1..40}; do
-        if [ -S /tmp/mpv_socket ]; then
-            # Clear the connection message line
-            printf "\r%*s\r" 50 ""
-            fade_in
-            return 0
-        fi
-        # Progressive dots animation (1-5 dots cycling)
-        dots=$((((i - 1) % 5) + 1))
-        printf "\r%s%*s" "Συνδέεται στον σταθμό$(printf "%*s" $dots "" | tr ' ' '.')" $((5 - dots)) ""
-        sleep 0.05
-    done
-    
-    # Connection failed
-    echo "Αποτυχία σύνδεσης στον σταθμό"
-    if kill -0 "$mpv_pid" 2>/dev/null; then
-        kill -9 "$mpv_pid" 2>/dev/null
+  # Wait for the IPC socket to be ready (max 2 seconds)
+for _ in {1..40}; do
+    if [ -S /tmp/mpv_socket ]; then
+      break
     fi
-    mpv_pid=""
-    return 1
+    sleep 0.05
+  done
+  fade_in
 }
 
 get_current_title() {
