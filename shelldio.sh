@@ -83,23 +83,36 @@ fade_in() {
 }
 
 start_mpv() {
-  if [[ -n "$mpv_pid" ]] && kill -0 "$mpv_pid" 2>/dev/null; then
-    fade_out
-    kill "$mpv_pid" 2>/dev/null
-    rm -f /tmp/mpv_socket
-  fi
-
-  mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
-  mpv_pid=$!
-
-  # Wait for the IPC socket to be ready (max 2 seconds)
-for _ in {1..40}; do
-    if [ -S /tmp/mpv_socket ]; then
-      break
+    if [[ -n "$mpv_pid" ]] && kill -0 "$mpv_pid" 2>/dev/null; then
+        fade_out
+        kill "$mpv_pid" 2>/dev/null
+        wait "$mpv_pid" 2>/dev/null
+        rm -f /tmp/mpv_socket
     fi
-    sleep 0.05
-  done
-  fade_in
+
+    mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
+    mpv_pid=$!
+
+    # Wait for the IPC socket to be ready with loading indicator
+    echo -n "Συνδέεται στον σταθμό"
+    for i in {1..40}; do
+        if [ -S /tmp/mpv_socket ]; then
+            echo " OK"
+            fade_in
+            return 0
+        fi
+        echo -n "."
+        sleep 0.05
+    done
+    
+    # Connection failed
+    echo " ✗"
+    echo "Αποτυχία σύνδεσης στον σταθμό"
+    if kill -0 "$mpv_pid" 2>/dev/null; then
+        kill "$mpv_pid" 2>/dev/null
+    fi
+    mpv_pid=""
+    return 1
 }
 
 get_current_title() {
