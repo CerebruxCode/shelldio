@@ -116,12 +116,13 @@ start_mpv() {
             fade_in
             return 0
         fi
-        echo -n "."
+        # Progressive dots animation (1-5 dots cycling)
+        dots=$((((i - 1) % 5) + 1))
+        printf "\r%s%*s" "Συνδέεται στον σταθμό$(printf "%*s" $dots "" | tr ' ' '.')" $((5 - dots)) ""
         sleep 0.05
     done
     
     # Connection failed
-    echo " ✗"
     echo "Αποτυχία σύνδεσης στον σταθμό"
     if kill -0 "$mpv_pid" 2>/dev/null; then
         kill -9 "$mpv_pid" 2>/dev/null
