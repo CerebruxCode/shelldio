@@ -105,7 +105,14 @@ start_mpv() {
         rm -f /tmp/mpv_socket
     fi
 
-    mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
+    # Detect OS and set appropriate audio options
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS - use coreaudio driver
+        mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 --ao=coreaudio "$stathmos_url" &>/dev/null &
+    else
+        # Linux/other Unix - default audio
+        mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
+    fi
     mpv_pid=$!
 
         # Wait for the IPC socket to be ready with loading indicator
@@ -270,7 +277,7 @@ load_station() {
         rm -f /tmp/mpv_socket
     fi
     
-    # Show change message at the bottom of screen (like in joker mode)
+    # Show change message at the bottom of screen
     echo "Αλλαγή σε: [$selected_play] $stathmos_name"
     if start_mpv; then
         # Clear the change message after successful connection
@@ -367,8 +374,7 @@ info() {
                 local random_station=$(( (RANDOM % total_stations) + 1 ))
                 selected_play=$random_station
                 
-                # Show change message
-                echo "Τυχαία επιλογή: σταθμός [$random_station]"
+                # Load the new station (load_station will show the change message)
                 load_station
                 ;;
             [Nn]) next_station ;;     # Next station
