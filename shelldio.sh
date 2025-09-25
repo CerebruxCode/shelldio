@@ -240,6 +240,51 @@ list_stations() {
 	done <"$1"
 }
 
+# Station navigation functions
+load_station() {
+    station=$(sed "${selected_play}q;d" "$stations")
+    stathmos_name=$(echo "$station" | cut -d "," -f1)
+    stathmos_url=$(echo "$station" | cut -d "," -f2)
+    
+    # Stop current stream and start new one
+    if [[ -n "$mpv_pid" ]] && kill -0 "$mpv_pid" 2>/dev/null; then
+        fade_out
+        kill "$mpv_pid" 2>/dev/null
+        # Wait for process to terminate
+        for i in {1..30}; do
+            if ! kill -0 "$mpv_pid" 2>/dev/null; then
+                break
+            fi
+            sleep 0.1
+        done
+        if kill -0 "$mpv_pid" 2>/dev/null; then
+            kill -9 "$mpv_pid" 2>/dev/null
+        fi
+        rm -f /tmp/mpv_socket
+    fi
+    
+    echo "Αλλαγή σε: [$selected_play] $stathmos_name"
+    start_mpv
+}
+
+next_station() {
+    if [[ $selected_play -lt $num ]]; then
+        selected_play=$((selected_play + 1))
+    else
+        selected_play=1  # Wrap to first station
+    fi
+    load_station
+}
+
+previous_station() {
+    if [[ $selected_play -gt 1 ]]; then
+        selected_play=$((selected_play - 1))
+    else
+        selected_play=$num  # Wrap to last station
+    fi
+    load_station
+}
+
 # Πληροφορίες που εμφανίζονται μετά την επιλογή του σταθμού
 info() {
     welcome_screen
@@ -279,9 +324,9 @@ info() {
         
         # Move cursor to menu at the bottom
         tput cup 24 0
-        echo -ne "   ____________               ___________"
+        echo -ne "   _______________________________________________________"
         tput cup 25 0
-        echo -ne "  [Έξοδος (Q/q)].___________.[Πίσω  (R/r)]"
+        echo -ne "  [Έξοδος (Q)] [Πίσω (R)] [Προηγ. (P/←)] [Επόμ. (N/→)]"
         tput cup 26 0
         echo -ne " "
         
@@ -290,6 +335,16 @@ info() {
         case "$input_play" in
             [Qq]) return 1 ;;  # Signal to quit
             [Rr]) return 0 ;;  # Signal to return to menu
+            [Nn]) next_station ;;     # Next station
+            [Pp]) previous_station ;; # Previous station
+            $'\e')
+                # Handle arrow keys (escape sequences)
+                read -r -n2 -s -t 0.1 arrow
+                case "$arrow" in
+                    "[C") next_station ;;     # Right arrow = Next
+                    "[D") previous_station ;; # Left arrow = Previous
+                esac
+                ;;
         esac
     done
     
@@ -411,8 +466,8 @@ joker_info() {
         echo -ne "  Τίτλος: $current_title\n"
         echo -ne "\n"
     fi
-	echo -ne "   ____________               ___________\n"
-	echo -ne "  [Έξοδος (Q/q)].___________.[Νέα τυχαία επιλογή  (N/n)]\n"
+	echo -ne "   _______________________________________________________\n"
+	echo -ne "  [Έξοδος (Q)] [Τυχαία (N)] [Προηγ. (P)] [Επόμ. (→)]\n"
 	echo -ne " "
 }
 
@@ -421,6 +476,7 @@ joker() {
     local stations="$all_stations"
     local station_number
     local input_play=""
+    local joker_mode="random"  # Initialize to random mode
 
     # Count total lines in stations file
     while IFS='' read -r line || [[ -n "$line" ]]; do
@@ -450,19 +506,26 @@ joker() {
     fi
 
     while true; do
-        # Pick random station
-        station_number=$(( (RANDOM % lines) + 1 ))
-        station=$(sed "${station_number}q;d" "$stations")
-        selected_play=$station_number
+        # Pick station based on mode
+        if [[ "$joker_mode" == "random" ]] || [[ -z "$selected_play" ]]; then
+            # Pick random station
+            station_number=$(( (RANDOM % lines) + 1 ))
+            selected_play=$station_number
+            echo "Επιλέχθηκε τυχαία: σταθμός $selected_play"
+        fi
+        
+        # Load the selected station
+        station=$(sed "${selected_play}q;d" "$stations")
         stathmos_name=$(echo "$station" | cut -d "," -f1)
         stathmos_url=$(echo "$station" | cut -d "," -f2)
-
-        echo "Επιλέχθηκε τυχαία: $stathmos_name"
         
         if ! start_mpv; then
             echo "Δοκιμάζουμε άλλον σταθμό..."
+            joker_mode="random"  # Force random on failure
             continue
         fi
+
+        joker_mode=""  # Clear mode after successful load
 
         # Setup interrupt handler for this station
         trap '{ tput cnorm; echo; echo "Έξοδος..."; kill $mpv_pid 2>/dev/null; exit 1; }' SIGINT
@@ -482,11 +545,43 @@ joker() {
                     exit 0
                     ;;
                 [Nn])
+                    fade_out
                     kill $mpv_pid 2>/dev/null
                     wait $mpv_pid 2>/dev/null
                     echo "Επιλογή νέου τυχαίου σταθμού..."
+                    joker_mode="random"
                     sleep 1
                     break  # Break inner loop to pick new station
+                    ;;
+                [Pp])
+                    fade_out
+                    kill $mpv_pid 2>/dev/null
+                    wait $mpv_pid 2>/dev/null
+                    if [[ $selected_play -gt 1 ]]; then
+                        selected_play=$((selected_play - 1))
+                    else
+                        selected_play=$lines  # Wrap to last station
+                    fi
+                    echo "Προηγούμενος σταθμός: [$selected_play]"
+                    sleep 1
+                    break  # Break inner loop to load new station
+                    ;;
+                $'\e')
+                    # Handle arrow keys (escape sequences)
+                    read -r -n2 -s -t 0.1 arrow
+                    if [[ "$arrow" == "[C" ]]; then  # Right arrow
+                        fade_out
+                        kill $mpv_pid 2>/dev/null
+                        wait $mpv_pid 2>/dev/null
+                        if [[ $selected_play -lt $lines ]]; then
+                            selected_play=$((selected_play + 1))
+                        else
+                            selected_play=1  # Wrap to first station
+                        fi
+                        echo "Επόμενος σταθμός: [$selected_play]"
+                        sleep 1
+                        break  # Break inner loop to load new station
+                    fi
                     ;;
             esac
         done
