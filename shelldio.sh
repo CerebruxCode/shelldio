@@ -13,6 +13,13 @@
 # Please read the file LICENSE and README for more information.
 #
 
+### Variable List
+
+version="v25.09.25"
+
+all_stations="$HOME/.shelldio/all_stations.txt"
+my_stations="$HOME/.shelldio/my_stations.txt"
+
 ### Colors
 if [ -t 1 ]; then
     RED=$(printf '\033[31m')
@@ -24,12 +31,6 @@ else
     RESET=""
 fi
 
-### Variable List
-
-version="v25.09.25"
-
-all_stations="$HOME/.shelldio/all_stations.txt"
-my_stations="$HOME/.shelldio/my_stations.txt"
 
 ### Functions List
 
