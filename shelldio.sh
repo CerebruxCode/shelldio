@@ -116,13 +116,25 @@ start_mpv() {
 }
 
 get_current_title() {
-	if [ -S /tmp/mpv_socket ]; then
-		local title
-		title=$(printf '{ "command": ["get_property", "media-title"] }\n' | socat - /tmp/mpv_socket 2>/dev/null | jq -r '.data' 2>/dev/null)
-		echo "$title"
-	else
-		echo ""
-	fi
+    if [ -S /tmp/mpv_socket ]; then
+        local title
+        # Try to get ICY metadata first (more reliable for radio streams)
+        title=$(printf '{ "command": ["get_property", "metadata"] }\n' | socat - /tmp/mpv_socket 2>/dev/null | jq -r '(.data // {}) | to_entries[] | select(.key | ascii_downcase | test("icy-title|title")) | .value' 2>/dev/null | head -n1)
+        
+        # Fallback to media-title if no metadata
+        if [[ -z "$title" || "$title" == "null" ]]; then
+            title=$(printf '{ "command": ["get_property", "media-title"] }\n' | socat - /tmp/mpv_socket 2>/dev/null | jq -r '.data' 2>/dev/null)
+        fi
+        
+        # Clean up the title
+        if [[ -n "$title" && "$title" != "null" && "$title" != "radio" ]]; then
+            echo "$title"
+        else
+            echo ""
+        fi
+    else
+        echo ""
+    fi
 }
 
 # Μήνυμα καλωσορίσματος
