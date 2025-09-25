@@ -105,14 +105,7 @@ start_mpv() {
         rm -f /tmp/mpv_socket
     fi
 
-    # Detect OS and set appropriate audio options
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS - use coreaudio driver
-        mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 --ao=coreaudio "$stathmos_url" &>/dev/null &
-    else
-        # Linux/other Unix - default audio
-        mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
-    fi
+    mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
     mpv_pid=$!
 
         # Wait for the IPC socket to be ready with loading indicator
