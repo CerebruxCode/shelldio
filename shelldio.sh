@@ -260,7 +260,7 @@ add_stations() {
 	sleep 1
 	list_stations "$all_stations"
 	while true; do
-		read -rp "Επέλεξε αριθμού σταθμού  (Q/q για έξοδο): " input_station
+		read -rp "Επέλεξε αριθμού σταθμου  (Q/q για έξοδο): " input_station
 		if [[ $input_station = "q" ]] || [[ $input_station = "Q" ]]; then
 			echo "Έξοδος..."
 			exit 0
@@ -371,94 +371,80 @@ joker_info() {
 }
 
 joker() {
+    local lines=0
+    local stations="$all_stations"
+    local station_number
+    local input_play=""
 
-	local lines=0
-	local stations="$all_stations"
-	local station_number
-	local input_play=""
+    # Count total lines in stations file
+    while IFS='' read -r line || [[ -n "$line" ]]; do
+        lines=$((lines + 1))
+    done <"$stations"
 
-	# Count total lines in stations file
-	while IFS='' read -r line || [[ -n "$line" ]]; do
-		lines=$((lines + 1))
-	done <"$stations"
+    validate_station_lists
 
-	station_number=$(( (RANDOM % lines) + 1 ))
-	validate_station_lists
+    # Setup signal handling
+    terms=0
+    trap ' [ $terms = 1 ] || { terms=1; kill -TERM -$$; };  exit' EXIT INT HUP TERM QUIT
 
-	# Setup signal handling
-	terms=0
-	trap ' [ $terms = 1 ] || { terms=1; kill -TERM -$$; };  exit' EXIT INT HUP TERM QUIT
+    # Ensure stations file exists
+    if [ -d "$HOME/.shelldio/" ]; then
+        if [ ! -f "$all_stations" ]; then
+            echo "Δεν ήταν δυνατή η εύρεση του αρχείου σταθμών. Γίνεται η λήψη του..."
+            sleep 2
+            curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
+        fi
+    else
+        echo "Δημιουργείται ο κρυφός φάκελος .shelldio ο οποίος θα περιέχει τα αρχεία των σταθμών."
+        sleep 2
+        mkdir -p "$HOME/.shelldio"
+        echo "Γίνεται η λήψη του αρχείου με όλους τους σταθμούς."
+        sleep 2
+        curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
+    fi
 
-	# Ensure stations file exists
-	if [ -d "$HOME/.shelldio/" ]; then
-		if [ ! -f "$all_stations" ]; then
-			echo "Δεν ήταν δυνατή η εύρεση του αρχείου σταθμών. Γίνεται η λήψη του..."
-			sleep 2
-			curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
-		fi
-	else
-		echo "Δημιουργείται ο κρυφός φάκελος .shelldio ο οποίος θα περιέχει τα αρχεία των σταθμών."
-		sleep 2
-		mkdir -p "$HOME/.shelldio"
-		echo "Γίνεται η λήψη του αρχείου με όλους τους σταθμούς."
-		sleep 2
-		curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
-	fi
+    while true; do
+        # Pick random station
+        station_number=$(( (RANDOM % lines) + 1 ))
+        station=$(sed "${station_number}q;d" "$stations")
+        selected_play=$station_number
+        stathmos_name=$(echo "$station" | cut -d "," -f1)
+        stathmos_url=$(echo "$station" | cut -d "," -f2)
 
-	while true; do
-		# Get station info
-		station=$(sed "${station_number}q;d" "$stations")
-		selected_play=$station_number
-		stathmos_name=$(echo "$station" | cut -d "," -f1)
-		stathmos_url=$(echo "$station" | cut -d "," -f2)
+        echo "Επιλέχθηκε τυχαία: $stathmos_name"
+        
+        if ! start_mpv; then
+            echo "Δοκιμάζουμε άλλον σταθμό..."
+            continue
+        fi
 
-		start_mpv
+        # Setup interrupt handler for this station
+        trap '{ tput cnorm; echo; echo "Έξοδος..."; kill $mpv_pid 2>/dev/null; exit 1; }' SIGINT
 
-		# User interaction loop
-		while true; do
-		trap '{ tput cnorm; echo; echo "Έξοδος..."; kill $mpv_pid 2>/dev/null; exit 1; }' SIGINT
-
-		clear
-		joker_info
-
-		last_title=""
-		last_time=""
-
-			while true; do
-				current_title=$(get_current_title)
-				current_time=$(date +"%T")
-
-				if [[ "$current_title" != "$last_title" ]]; then
-					tput cup 3 0
-					printf "%-80s" "Τίτλος: $current_title"
-					last_title="$current_title"
-				fi
-
-				if [[ "$current_time" != "$last_time" ]]; then
-					tput cup 1 0
-					printf "%-20s" "Ώρα: $current_time"
-					last_time="$current_time"
-				fi
-
-
-				read -r -n1 -s -t 0.1 input_play
-				if [[ $input_play = "q" ]] || [[ $input_play = "Q" ]]; then
-					tput cnorm
-					echo
-					echo "Έξοδος..."
-					kill $mpv_pid 2>/dev/null
-					exit 0
-				elif [[ $input_play = "n" ]] || [[ $input_play = "N" ]]; then
-					kill $mpv_pid 2>/dev/null
-					wait $mpv_pid 2>/dev/null
-					station_number=$(( (RANDOM % lines) + 1 ))
-					echo "Επιλογή νέου τυχαίου σταθμού..."
-					sleep 1
-					break
-				fi
-			done
-		done
-	done
+        # Play this station
+        while kill -0 "$mpv_pid" 2>/dev/null; do
+            clear
+            joker_info
+            
+            read -r -n1 -s -t 1 input_play
+            case "$input_play" in
+                [Qq])
+                    tput cnorm
+                    echo
+                    echo "Έξοδος..."
+                    kill $mpv_pid 2>/dev/null
+                    exit 0
+                    ;;
+                [Nn])
+                    kill $mpv_pid 2>/dev/null
+                    wait $mpv_pid 2>/dev/null
+                    echo "Επιλογή νέου τυχαίου σταθμού..."
+                    sleep 1
+                    break  # Break inner loop to pick new station
+                    ;;
+            esac
+        done
+    done
 }
 
 reset_favorites() {
