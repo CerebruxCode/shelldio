@@ -69,24 +69,38 @@ validate_station_lists() {
 # 	mpv_pid=$!
 # }
 fade_out() {
-  for vol in {100..0..-5}; do
-    echo '{ "command": ["set_property", "volume", '"$vol"'] }' | socat - /tmp/mpv_socket &>/dev/null
-    sleep 0.03
-  done
+  if [ -S /tmp/mpv_socket ]; then
+    for vol in {100..0..-5}; do
+      echo '{ "command": ["set_property", "volume", '"$vol"'] }' | socat - /tmp/mpv_socket &>/dev/null
+      sleep 0.03
+    done
+  fi
 }
 
 fade_in() {
-  for vol in {0..100..5}; do
-    echo '{ "command": ["set_property", "volume", '"$vol"'] }' | socat - /tmp/mpv_socket &>/dev/null
-    sleep 0.03
-  done
+  if [ -S /tmp/mpv_socket ]; then
+    for vol in {0..100..5}; do
+      echo '{ "command": ["set_property", "volume", '"$vol"'] }' | socat - /tmp/mpv_socket &>/dev/null
+      sleep 0.03
+    done
+  fi
 }
 
 start_mpv() {
     if [[ -n "$mpv_pid" ]] && kill -0 "$mpv_pid" 2>/dev/null; then
         fade_out
         kill "$mpv_pid" 2>/dev/null
-        wait "$mpv_pid" 2>/dev/null
+        # Wait up to 3 seconds for process to terminate
+        for i in {1..30}; do
+            if ! kill -0 "$mpv_pid" 2>/dev/null; then
+                break
+            fi
+            sleep 0.1
+        done
+        # Force kill if still running
+        if kill -0 "$mpv_pid" 2>/dev/null; then
+            kill -9 "$mpv_pid" 2>/dev/null
+        fi
         rm -f /tmp/mpv_socket
     fi
 
@@ -109,7 +123,7 @@ start_mpv() {
     echo " ✗"
     echo "Αποτυχία σύνδεσης στον σταθμό"
     if kill -0 "$mpv_pid" 2>/dev/null; then
-        kill "$mpv_pid" 2>/dev/null
+        kill -9 "$mpv_pid" 2>/dev/null
     fi
     mpv_pid=""
     return 1
@@ -212,6 +226,7 @@ EOF
 
 # Δημιουργεί και εμφανίζει σε λίστα τους σταθμούς στο txt file που δέχεται σαν flag
 list_stations() {
+	num=0  # Initialize counter
 	while IFS='' read -r line || [[ -n "$line" ]]; do
 		num=$((num + 1))
 		echo ["$num"] "$line" | cut -d "," -f1
@@ -299,12 +314,12 @@ remove_station() {
 		sleep 1
 		list_stations "$my_stations"
 		while true; do
-			read -rp "Επέλεξε αριθμού σταθμού  (Q/q για έξοδο): " remove_station
-			if [[ $remove_station = "q" ]] || [[ $remove_station = "Q" ]]; then
+			read -rp "Επέλεξε αριθμού σταθμού  (Q/q για έξοδο): " station_to_remove
+			if [[ $station_to_remove = "q" ]] || [[ $station_to_remove = "Q" ]]; then
 				echo "Έξοδος..."
 				exit 0
-			elif [ "$remove_station" -gt 0 ] && [ "$remove_station" -le "$num" ]; then #έλεγχος αν το input είναι μέσα στο εύρος της λίστας των σταθμών
-				station=$(sed "${remove_station}q;d" "$my_stations")
+			elif [ "$station_to_remove" -gt 0 ] && [ "$station_to_remove" -le "$num" ]; then #έλεγχος αν το input είναι μέσα στο εύρος της λίστας των σταθμών
+				station=$(sed "${station_to_remove}q;d" "$my_stations")
 				stathmos_name=$(echo "$station" | cut -d "," -f1)
 				grep -v "$stathmos_name" "$HOME/.shelldio/my_stations.txt" >"$HOME/.shelldio/my_stations.tmp" && mv "$HOME/.shelldio/my_stations.tmp" "$HOME/.shelldio/my_stations.txt"
 				echo "Διαγράφηκε ο σταθμός $stathmos_name."
@@ -595,7 +610,11 @@ while [ "$1" != "" ]; do
 		fi
 		echo "Γίνεται λήψη του αρχείου των σταθμών από το αποθετήριο."
 		sleep 1
-		curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"
+		if ! curl -sL https://raw.githubusercontent.com/CerebruxCode/shelldio/stable/.shelldio/all_stations.txt --output "$HOME/.shelldio/all_stations.txt"; then
+			echo "Αποτυχία λήψης του αρχείου σταθμών. Ελέγξτε τη σύνδεσή σας στο διαδίκτυο."
+			exit 1
+		fi
+		echo "Επιτυχής λήψη του αρχείου σταθμών."
 		exit 0
 		;;
 	-u | --update)
