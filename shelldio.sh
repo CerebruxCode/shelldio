@@ -108,9 +108,11 @@ start_mpv() {
     mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
     mpv_pid=$!
 
-    # Wait for the IPC socket to be ready with loading indicator
+        # Wait for the IPC socket to be ready with loading indicator
     for i in {1..40}; do
         if [ -S /tmp/mpv_socket ]; then
+            # Clear the connection message line
+            printf "\r%*s\r" 50 ""
             fade_in
             return 0
         fi
@@ -263,9 +265,13 @@ load_station() {
         rm -f /tmp/mpv_socket
     fi
     
-    # Show change message at the bottom of screen
+    # Show change message at the bottom of screen (like in joker mode)
     echo "Αλλαγή σε: [$selected_play] $stathmos_name"
-    start_mpv
+    if start_mpv; then
+        # Clear the change message after successful connection
+        tput cuu1
+        printf "\r%*s\r" 60 ""
+    fi
 }
 
 next_station() {
