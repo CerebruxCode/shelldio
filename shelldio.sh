@@ -111,7 +111,6 @@ start_mpv() {
     # Wait for the IPC socket to be ready with loading indicator
     for i in {1..40}; do
         if [ -S /tmp/mpv_socket ]; then
-            echo " OK"
             fade_in
             return 0
         fi
