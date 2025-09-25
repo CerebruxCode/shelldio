@@ -108,9 +108,7 @@ start_mpv() {
     mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
     mpv_pid=$!
 
-    # Clear screen and wait for the IPC socket to be ready with loading indicator
-    clear
-    #echo -n "Συνδέεται στον σταθμό"
+    # Wait for the IPC socket to be ready with loading indicator
     for i in {1..40}; do
         if [ -S /tmp/mpv_socket ]; then
             echo " OK"
@@ -266,6 +264,8 @@ load_station() {
         rm -f /tmp/mpv_socket
     fi
     
+    # Clear screen when switching stations and show change message
+    clear
     echo "Αλλαγή σε: [$selected_play] $stathmos_name"
     start_mpv
 }
