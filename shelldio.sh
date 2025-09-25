@@ -108,8 +108,9 @@ start_mpv() {
     mpv --no-video --input-ipc-server=/tmp/mpv_socket --volume=0 "$stathmos_url" &>/dev/null &
     mpv_pid=$!
 
-    # Wait for the IPC socket to be ready with loading indicator
-    echo -n "Συνδέεται στον σταθμό"
+    # Clear screen and wait for the IPC socket to be ready with loading indicator
+    clear
+    #echo -n "Συνδέεται στον σταθμό"
     for i in {1..40}; do
         if [ -S /tmp/mpv_socket ]; then
             echo " OK"
