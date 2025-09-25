@@ -569,7 +569,7 @@ joker() {
             tput cup 24 0
             echo -ne "   _______________________________________________________"
             tput cup 25 0
-            echo -ne "  [Έξοδος (Q)] [Τυχαία (N)] [Προηγ. (P)] [Επόμ. (→)]"
+            echo -ne "  [Έξοδος (Q)] [Τυχαίo (J)] [Προηγ. (P/←)] [Επόμ. (N/→)]"
             tput cup 26 0
             echo -ne " "
             
@@ -582,7 +582,7 @@ joker() {
                     kill $mpv_pid 2>/dev/null
                     exit 0
                     ;;
-                [Nn])
+                [Jj])
                     fade_out
                     kill $mpv_pid 2>/dev/null
                     wait $mpv_pid 2>/dev/null
@@ -601,6 +601,19 @@ joker() {
                         selected_play=$lines  # Wrap to last station
                     fi
                     echo "Προηγούμενος σταθμός: [$selected_play]"
+                    sleep 1
+                    break  # Break inner loop to load new station
+                    ;;
+                [Nn])
+                    fade_out
+                    kill $mpv_pid 2>/dev/null
+                    wait $mpv_pid 2>/dev/null
+                    if [[ $selected_play -lt $lines ]]; then
+                        selected_play=$((selected_play + 1))
+                    else
+                        selected_play=1  # Wrap to first station
+                    fi
+                    echo "Επόμενος σταθμός: [$selected_play]"
                     sleep 1
                     break  # Break inner loop to load new station
                     ;;
