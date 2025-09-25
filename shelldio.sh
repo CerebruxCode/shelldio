@@ -352,7 +352,7 @@ info() {
         echo -ne " "
         
         # Check for user input
-        read -r -n1 -s -t 0.1 input_play
+        read -r -n1 -s -t 1 input_play
         case "$input_play" in
             [Qq]) return 1 ;;  # Signal to quit
             [Ll]) return 0 ;;  # Signal to return to menu
@@ -375,7 +375,7 @@ info() {
             [Pp]) previous_station ;; # Previous station
             $'\e')
                 # Handle arrow keys (escape sequences)
-                read -r -n2 -s -t 0.1 arrow
+                read -r -n2 -s -t 1 arrow
                 case "$arrow" in
                     "[C") next_station ;;     # Right arrow = Next
                     "[D") previous_station ;; # Left arrow = Previous
