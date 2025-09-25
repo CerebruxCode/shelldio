@@ -326,7 +326,7 @@ info() {
         tput cup 24 0
         echo -ne "   _______________________________________________________"
         tput cup 25 0
-        echo -ne "  [Έξοδος (Q)] [Πίσω (R)] [Προηγ. (P/←)] [Επόμ. (N/→)]"
+        echo -ne "  [Έξοδος (Q)] [Λίστα (L)] [Προηγ. (P/←)] [Επόμ. (N/→)]"
         tput cup 26 0
         echo -ne " "
         
@@ -334,7 +334,7 @@ info() {
         read -r -n1 -s -t 0.1 input_play
         case "$input_play" in
             [Qq]) return 1 ;;  # Signal to quit
-            [Rr]) return 0 ;;  # Signal to return to menu
+            [Ll]) return 0 ;;  # Signal to return to menu
             [Nn]) next_station ;;     # Next station
             [Pp]) previous_station ;; # Previous station
             $'\e')
