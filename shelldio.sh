@@ -264,8 +264,7 @@ load_station() {
         rm -f /tmp/mpv_socket
     fi
     
-    # Clear screen when switching stations and show change message
-    clear
+    # Show change message at the bottom of screen
     echo "Αλλαγή σε: [$selected_play] $stathmos_name"
     start_mpv
 }
