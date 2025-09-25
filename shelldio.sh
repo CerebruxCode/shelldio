@@ -285,6 +285,13 @@ info() {
             [Rr]) return 0 ;;  # Signal to return to menu
         esac
     done
+    
+    # If we reach here, mpv process has died
+    echo ""
+    echo "Η σύνδεση με τον σταθμό διακόπηκε"
+    echo "Πατήστε οποιοδήποτε πλήκτρο για επιστροφή στη λίστα..."
+    read -r -n1 -s
+    return 0  # Return to menu when stream dies
 }
 
 add_stations() {
