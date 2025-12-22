@@ -8,7 +8,7 @@ url="https://github.com/CerebruxCode/Shelldio"
 license=('GPL3')
 depends=('mpv' 'curl' 'jq' 'socat')
 install=shelldio.install
-source=("${pkgname}-${pkgver}.tar.gz::https://github.com/CerebruxCode/shelldio/archive/v${pkgver}.tar.gz")
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/CerebruxCode/shelldio/archive/${pkgver}.tar.gz")
 
 package() {
     cd "$pkgname-$pkgver"
